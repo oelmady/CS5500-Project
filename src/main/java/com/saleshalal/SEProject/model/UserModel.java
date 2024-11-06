@@ -1,9 +1,6 @@
 package com.saleshalal.SEProject.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
 public class UserModel {
@@ -12,6 +9,7 @@ public class UserModel {
   private Long id;
 
   private String email;
+
   private String password;
 
   // Getters and Setters
