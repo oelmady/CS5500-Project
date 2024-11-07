@@ -16,10 +16,11 @@ public class UserService {
     this.userRepository = userRepository;
   }
 
-    // private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+  private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
   public UserModel registerUser(UserModel user) {
-    // String encodedPassword = passwordEncoder.encode(user.getPassword());
+    String encodedPassword = passwordEncoder.encode(user.getPassword());
+    // not using encoded password yet
     user.setPassword(user.getPassword());
     user.setEmail(user.getEmail());
     return this.userRepository.save(user);
@@ -29,4 +30,19 @@ public class UserService {
     UserModel user = userRepository.findByEmail(email);
     return user != null && password.equals(user.getPassword());
   }
+
+
+//  @Override
+//  public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+//    UserModel user = userRepository.findByEmail(email);
+//
+//    if (user == null) {
+//      throw new UsernameNotFoundException("User not found");
+//    }
+//
+//    return org.springframework.security.core.userdetails.User
+//            .withUsername(user.getEmail())
+//            .password(user.getPassword())
+//            .build();
+//  }
 }
