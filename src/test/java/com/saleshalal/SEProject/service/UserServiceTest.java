@@ -1,48 +1,97 @@
 package com.saleshalal.SEProject.service;
 
-import com.saleshalal.SEProject.model.UserModel;
-import com.saleshalal.SEProject.repository.UserRepository;
-
-import org.aspectj.lang.annotation.Before;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
+
+import com.saleshalal.SEProject.model.UserModel;
+import com.saleshalal.SEProject.repository.UserRepository;
 
 @SpringBootTest
 class UserServiceTest {
 
-  @MockBean
-  private UserRepository userRepository;
-
   @Autowired
   private UserService userService;
 
-  String testEmail = "test@email.com";
-  String testPassword = "testPassword";
+  @MockBean
+  private UserRepository userRepository;
 
-  // Test registered account enters database and can be retrieved
   @Test
-  void testRegisterUser_Success() {
+  void testRegisterUser() {
+    // Arrange
     UserModel user = new UserModel();
-    // attempt to register by setting email and password
+    user.setEmail("test@example.com");
+    user.setPassword("password123");
+
+    when(userRepository.save(any(UserModel.class))).thenReturn(user);
+
+    // Act
+    UserModel registeredUser = userService.registerUser(user);
+
+    // Assert
+    assertNotNull(registeredUser);
+    assertEquals("test@example.com", registeredUser.getEmail());
+    assertEquals("password123", registeredUser.getPassword());  // No encoding for now
+    verify(userRepository, times(1)).save(user);
   }
 
   @Test
-  void testValidateCredentials_Success() {
+  void testValidateLogin_Success() {
+    // Arrange
+    String email = "test@example.com";
+    String password = "password123";
+
+    UserModel user = new UserModel();
+    user.setEmail(email);
+    user.setPassword(password);
+
+    when(userRepository.findByEmail(email)).thenReturn(user);
+
+    // Act
+    boolean isValid = userService.validateLogin(email, password);
+
+    // Assert
+    assertTrue(isValid);
+    verify(userRepository, times(1)).findByEmail(email);
   }
 
   @Test
-  void testValidateCredentials_Failure_InvalidPassword() {
-  }
+  void testValidateLogin_InvalidPassword() {
+    // Arrange
+    String email = "test@example.com";
+    String password = "password123";
 
+    UserModel user = new UserModel();
+    user.setEmail(email);
+    user.setPassword("wrongPassword");
+
+    when(userRepository.findByEmail(email)).thenReturn(user);
+
+    // Act
+    boolean isValid = userService.validateLogin(email, password);
+
+    // Assert
+    assertFalse(isValid);
+    verify(userRepository, times(1)).findByEmail(email);
+  }
 
   @Test
-  void testValidateCredentials_Failure_InvalidEmail() {
-  }
+  void testValidateLogin_UserNotFound() {
+    // Arrange
+    String email = "test@example.com";
+    String password = "password123";
 
+    when(userRepository.findByEmail(email)).thenReturn(null);
+
+    // Act
+    boolean isValid = userService.validateLogin(email, password);
+
+    // Assert
+    assertFalse(isValid);
+    verify(userRepository, times(1)).findByEmail(email);
+  }
 }
