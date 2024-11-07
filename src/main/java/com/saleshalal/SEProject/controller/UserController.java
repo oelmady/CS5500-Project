@@ -1,8 +1,7 @@
 package com.saleshalal.SEProject.controller;
+
 import com.saleshalal.SEProject.model.UserModel;
 import com.saleshalal.SEProject.service.UserService;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -10,8 +9,12 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequestMapping("/auth")
 public class UserController {
-  @Autowired
-  private UserService userService;
+
+  private final UserService userService;
+
+  public UserController(UserService userService) {
+    this.userService = userService;
+  }
 
   @GetMapping("/register")
   public String showRegistrationForm(Model model) {
