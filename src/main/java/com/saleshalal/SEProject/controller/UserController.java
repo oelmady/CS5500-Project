@@ -7,7 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/auth")
+@RequestMapping("/")
 public class UserController {
 
   private final UserService userService;
@@ -36,7 +36,7 @@ public class UserController {
   @PostMapping("/login")
   public String loginUser(@RequestParam String email, @RequestParam String password, Model model) {
     if (userService.validateLogin(email, password)) {
-      return "redirect:/home";
+      return "redirect:/login";
     }
     model.addAttribute("error", "Invalid credentials");
     return "login";
