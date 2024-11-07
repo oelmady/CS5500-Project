@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+// todo: extend UserDetailsService for spring security auth
 @Service
 public class UserService {
   private final UserRepository userRepository;
@@ -22,16 +23,20 @@ public class UserService {
     String encodedPassword = passwordEncoder.encode(user.getPassword());
     // not using encoded password yet
     user.setPassword(user.getPassword());
-    user.setEmail(user.getEmail());
+    user.setUsername(user.getUsername());
     return this.userRepository.save(user);
   }
 
-  public boolean validateLogin(String email, String password) {
-    UserModel user = userRepository.findByEmail(email);
+
+  // Todo: validate the email, we will need to use regex
+  // https://www.baeldung.com/registration-with-spring-mvc-and-spring-security
+
+  public boolean validateLogin(String username, String password) {
+    UserModel user = userRepository.findByUsername(username);
     return user != null && password.equals(user.getPassword());
   }
 
-
+// Todo: implement spring security methods
 //  @Override
 //  public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 //    UserModel user = userRepository.findByEmail(email);

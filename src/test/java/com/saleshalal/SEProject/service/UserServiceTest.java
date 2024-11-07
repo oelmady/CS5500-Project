@@ -24,7 +24,7 @@ class UserServiceTest {
   void testRegisterUser() {
     // Arrange
     UserModel user = new UserModel();
-    user.setEmail("test@example.com");
+    user.setUsername("test@example.com");
     user.setPassword("password123");
 
     when(userRepository.save(any(UserModel.class))).thenReturn(user);
@@ -34,7 +34,7 @@ class UserServiceTest {
 
     // Assert
     assertNotNull(registeredUser);
-    assertEquals("test@example.com", registeredUser.getEmail());
+    assertEquals("test@example.com", registeredUser.getUsername());
     assertEquals("password123", registeredUser.getPassword());  // No encoding for now
     verify(userRepository, times(1)).save(user);
   }
@@ -46,17 +46,17 @@ class UserServiceTest {
     String password = "password123";
 
     UserModel user = new UserModel();
-    user.setEmail(email);
+    user.setUsername(email);
     user.setPassword(password);
 
-    when(userRepository.findByEmail(email)).thenReturn(user);
+    when(userRepository.findByUsername(email)).thenReturn(user);
 
     // Act
     boolean isValid = userService.validateLogin(email, password);
 
     // Assert
     assertTrue(isValid);
-    verify(userRepository, times(1)).findByEmail(email);
+    verify(userRepository, times(1)).findByUsername(email);
   }
 
   @Test
@@ -66,17 +66,17 @@ class UserServiceTest {
     String password = "password123";
 
     UserModel user = new UserModel();
-    user.setEmail(email);
+    user.setUsername(email);
     user.setPassword("wrongPassword");
 
-    when(userRepository.findByEmail(email)).thenReturn(user);
+    when(userRepository.findByUsername(email)).thenReturn(user);
 
     // Act
     boolean isValid = userService.validateLogin(email, password);
 
     // Assert
     assertFalse(isValid);
-    verify(userRepository, times(1)).findByEmail(email);
+    verify(userRepository, times(1)).findByUsername(email);
   }
 
   @Test
@@ -85,13 +85,13 @@ class UserServiceTest {
     String email = "test@example.com";
     String password = "password123";
 
-    when(userRepository.findByEmail(email)).thenReturn(null);
+    when(userRepository.findByUsername(email)).thenReturn(null);
 
     // Act
     boolean isValid = userService.validateLogin(email, password);
 
     // Assert
     assertFalse(isValid);
-    verify(userRepository, times(1)).findByEmail(email);
+    verify(userRepository, times(1)).findByUsername(email);
   }
 }
