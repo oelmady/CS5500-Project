@@ -1,2 +1,7 @@
-.DS_Store
-/target
+*.DS_Store
+target/
+target/*
+.classpath
+.project
+*.class
+*.tmp

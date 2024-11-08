@@ -55,16 +55,16 @@ public class UserControllerTest {
     }
 
     // Todo: implement functionality to redirect existing email to login
-//    @Test
-//    @WithMockUser(username = "test@example.com", password = "password123")
-//    public void testUserRegistration_ExistingAccount() throws Exception {
-//        // If the user has an account, redirect to
-//        mockMvc.perform(post("/auth/register")
-//                        .param("email", "testuser@example.com")
-//                        .param("password", "password123"))
-//                .andExpect(status().is3xxRedirection())
-//                .andExpect(redirectedUrl("/auth/login"));
-//    }
+    @Test
+    @WithMockUser(username = "test@example.com", password = "password123")
+    public void testUserRegistration_ExistingAccount() throws Exception {
+        // If the user has an account, redirect to
+        mockMvc.perform(post("/auth/register")
+                        .param("email", "testuser@example.com")
+                        .param("password", "password123"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/auth/login"));
+    }
 
     @Test
     public void testUserRegistration_Success(){
