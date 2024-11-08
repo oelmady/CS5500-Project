@@ -29,7 +29,7 @@ public class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "test@example.com", password = "password")
+    @WithMockUser(username = "test@example.com", roles = "USER")
     public void testLoginView_ExistingUser() throws Exception {
         // Users should be able to view the login page
         mockMvc.perform(get("/auth/login"))
