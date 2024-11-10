@@ -1,94 +1,81 @@
 package com.saleshalal.SEProject.controller;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import com.saleshalal.SEProject.model.UserModel;
 import com.saleshalal.SEProject.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(UserController.class)
 public class UserControllerTest {
+    @MockBean
+    private UserService userService;
 
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
-    private UserService userService;
 
+    // Test case for showing the registration form
     @Test
-    public void testLoginView_NewUser() throws Exception{
-        // new users should be able to view the login page
-        mockMvc.perform(get("/auth/login"))
+    public void testShowRegistrationForm() throws Exception {
+        mockMvc.perform(get("/register"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("login"));
+                .andExpect(view().name("register"))
+                .andExpect(model().attributeExists("user"));
     }
 
+    // Test case for registering a user successfully
     @Test
-    @WithMockUser(username = "test@example.com", roles = "USER")
-    public void testLoginView_ExistingUser() throws Exception {
-        // Users should be able to view the login page
-        mockMvc.perform(get("/auth/login"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("login"));
-    }
+    public void testRegisterUser_Success() throws Exception {
+        // Mock user registration
+        when(userService.registerUser(any(UserModel.class))).thenReturn(new UserModel());
 
-    @Test
-    public void testRegisterView_NewUser() throws Exception {
-        // New users should be able to view the registration page
-        mockMvc.perform(get("/auth/register"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("register"));
-    }
-
-    @Test
-    @WithMockUser(username = "test@example.com", password = "password")
-    public void testRegisterView_ExistingUser() throws Exception {
-        // Users should be able to view the registration page
-        mockMvc.perform(get("/auth/register"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("register"));
-    }
-
-    // Todo: implement functionality to redirect existing email to login
-    @Test
-    @WithMockUser(username = "test@example.com", password = "password123")
-    public void testUserRegistration_ExistingAccount() throws Exception {
-        // If the user has an account, redirect to
-        mockMvc.perform(post("/auth/register")
-                        .param("email", "testuser@example.com")
+        mockMvc.perform(post("/register")
+                        .param("email", "test@example.com")
                         .param("password", "password123"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/auth/login"));
     }
 
+    // Test case for showing the login form
     @Test
-    public void testUserRegistration_Success(){
+    public void testShowLoginForm() throws Exception {
+        mockMvc.perform(get("/login"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("login"));
     }
 
+    // Test case for successful login
     @Test
-    public void testUserLogin_Success() throws Exception {
-        // Mock the UserService to return a user when validating credentials
-        String email = "testuser@example.com";
-        String password = "password123";
+    public void testLoginUser_Success() throws Exception {
+        when(userService.validateLogin("test@example.com", "password123")).thenReturn(true);
 
-
-        when(userService.validateLogin(email, password)).thenReturn(true);
-
-        // Simulate redirect after logging in with valid credentials
-        mockMvc.perform(post("/auth/login")
-                .param("username", email)
-                .param("password", password))
-            .andExpect(status().is3xxRedirection())
-            .andExpect(redirectedUrl("/index"));
+        mockMvc.perform(post("/login")
+                        .param("email", "test@example.com")
+                        .param("password", "password123"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/index"));
     }
 
+    // Test case for unsuccessful login
     @Test
-    public void testUserLogin_InvalidCredentials(){
+    public void testLoginUser_Failure() throws Exception {
+        when(userService.validateLogin("test@example.com", "wrongpassword")).thenReturn(false);
 
+        mockMvc.perform(post("/login")
+                        .param("email", "test@example.com")
+                        .param("password", "wrongpassword"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("login"))
+                .andExpect(model().attributeExists("error"))
+                .andExpect(model().attribute("error", "Invalid credentials"));
     }
 }

@@ -21,10 +21,11 @@ public class WebSecurityConfig {
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    // @formatter:off
+
     http
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests((authorize) -> authorize
+                    .requestMatchers("/auth/*","/auth/register", "/auth/login").permitAll()
                     .anyRequest().permitAll()
             )
             .formLogin(login -> login
@@ -32,7 +33,7 @@ public class WebSecurityConfig {
                     .permitAll()
             )
             .httpBasic(withDefaults());
-    // @formatter:on
     return http.build();
   }
+
 }

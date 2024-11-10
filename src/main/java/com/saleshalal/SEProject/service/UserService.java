@@ -27,6 +27,11 @@ public class UserService {
     return this.userRepository.save(user);
   }
 
+// Todo: validate the email, we will need to use regex
+public boolean isValidEmail(String email) {
+    String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
+    return email.matches(emailRegex);
+}
 
   // Todo: validate the email, we will need to use regex
   // https://www.baeldung.com/registration-with-spring-mvc-and-spring-security
@@ -36,18 +41,4 @@ public class UserService {
     return user != null && password.equals(user.getPassword());
   }
 
-// Todo: implement spring security methods
-//  @Override
-//  public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-//    UserModel user = userRepository.findByEmail(email);
-//
-//    if (user == null) {
-//      throw new UsernameNotFoundException("User not found");
-//    }
-//
-//    return org.springframework.security.core.userdetails.User
-//            .withUsername(user.getEmail())
-//            .password(user.getPassword())
-//            .build();
-//  }
 }

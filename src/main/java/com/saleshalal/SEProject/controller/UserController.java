@@ -6,7 +6,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
+/*
+    * This class is the controller for the user registration and login pages.
+    * GET requests to /auth/register will show the registration form.
+    * POST requests to /auth/register will register the user.
+    * On successful registration, the user will be redirected to the login page.
+    * GET requests to /auth/login will show the login form.
+    * POST requests to /auth/login will log the user in.
+    *
+ */
 @Controller
 @RequestMapping("/auth")
 public class UserController {
