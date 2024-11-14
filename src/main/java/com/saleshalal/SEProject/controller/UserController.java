@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequestMapping("/auth")
 public class UserController {
-// todo: update the html files to be more informative
 
   private final UserService userService;
 
@@ -30,7 +29,7 @@ public class UserController {
   @GetMapping("/register")
   public String showRegistrationForm(Model model) {
     model.addAttribute("user", new UserModel());
-    return "register";
+    return "auth/register";
   }
 
   @PostMapping("/register")
@@ -41,15 +40,15 @@ public class UserController {
 
   @GetMapping("/login")
   public String showLoginForm() {
-    return "login";
+    return "auth/login";
   }
 
   @PostMapping("/login")
   public String loginUser(@RequestParam String email, @RequestParam String password, Model model) {
     if (userService.validateLogin(email, password)) {
-      return "redirect:/index"; // no home page yet
+      return "redirect:/index"; // Redirect to a home page when ready
     }
     model.addAttribute("error", "Invalid credentials");
-    return "login";
+    return "auth/login";
   }
 }
