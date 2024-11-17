@@ -45,6 +45,9 @@ public class AuthController {
                                    BindingResult result,
                                    Model model) {
         logger.info("Registering customer");
+        if (result.hasErrors()) {
+            return "register/customer";
+        }
         try {
             userService.registerCustomer(customer);
             return "redirect:/login?registered=true";

@@ -5,9 +5,9 @@ import com.saleshalal.SEProject.model.User;
 import com.saleshalal.SEProject.model.UserRole;
 import com.saleshalal.SEProject.model.Vendor;
 import com.saleshalal.SEProject.repository.CustomerRepository;
-import com.saleshalal.SEProject.repository.UserRepository;
 
 import com.saleshalal.SEProject.repository.VendorRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -15,27 +15,27 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
+@Transactional
 public class UserService implements UserDetailsService {
 
-    private final UserRepository userRepository;
     private final CustomerRepository customerRepository;
     private final VendorRepository vendorRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository,
-                       CustomerRepository customerRepository,
+    public UserService(CustomerRepository customerRepository,
                        VendorRepository vendorRepository,
                        PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
         this.customerRepository = customerRepository;
         this.vendorRepository = vendorRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
     public void registerCustomer(Customer customer) {
-        if (userRepository.findByEmail(customer.getEmail()).isPresent()) {
+        if (customerRepository.findByEmail(customer.getEmail()).isPresent()) {
             throw new RuntimeException("Email already registered");
         }
 
@@ -45,12 +45,11 @@ public class UserService implements UserDetailsService {
     }
 
     public void registerVendor(Vendor vendor) {
-        if (userRepository.findByEmail(vendor.getEmail()).isPresent()) {
+        if (vendorRepository.findByEmail(vendor.getEmail()).isPresent()) {
             throw new RuntimeException("Email already registered");
         }
 
-        // Add vendor-specific validation
-        if (vendor.getBusinessName() == null || vendor.getBusinessRegistration() == null) {
+        if (vendor.getBusinessName() == null || vendor.getBusinessNumber() == null) {
             throw new RuntimeException("Business details are required");
         }
 
@@ -61,11 +60,22 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        Optional<Customer> customer = customerRepository.findByEmail(email);
+        if (customer.isPresent()) {
+            return buildUserDetails(customer.get());
+        }
 
-        return org.springframework.security.core.userdetails.User.builder()
-                .username(user.getEmail())
+        Optional<Vendor> vendor = vendorRepository.findByEmail(email);
+        if (vendor.isPresent()) {
+            return buildUserDetails(vendor.get());
+        }
+
+        throw new UsernameNotFoundException("User not found");
+    }
+
+    private UserDetails buildUserDetails(User user) {
+        return org.springframework.security.core.userdetails.User
+                .withUsername(user.getEmail())
                 .password(user.getPassword())
                 .roles(user.getRole().name())
                 .build();

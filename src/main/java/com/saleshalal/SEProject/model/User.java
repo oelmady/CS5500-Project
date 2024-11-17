@@ -6,16 +6,11 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
-// Todo: implement entity using @table and @Column
+@MappedSuperclass
 @EqualsAndHashCode
 @ToString
 @Setter
 @Getter
-@Entity
-@NoArgsConstructor
-@AllArgsConstructor
-@Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "users")
 public abstract class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,6 +28,19 @@ public abstract class User {
     @NotBlank(message = "Name is required")
     private String name;
 
+    @Column(nullable = false)
+    private boolean isActive = true;
+
     @Enumerated(EnumType.STRING)
     private UserRole role;
+
+    protected User() {
+    }
+
+    public User(String email, String password, String name, UserRole role) {
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.role = role;
+    }
 }
