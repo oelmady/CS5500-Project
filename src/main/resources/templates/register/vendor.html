@@ -10,7 +10,7 @@
     <div class="alert alert-error" th:if="${error}" th:text="${error}">
     </div>
 
-    <form method="post" th:action="@{/register/vendor}" th:object="${user}">
+    <form method="post" th:action="@{/register/vendor}" th:object="${vendor}">
         <div>
             <label>Name:</label>
             <input required th:field="*{name}" type="text">
@@ -32,14 +32,12 @@
         </div>
 
         <div>
-            <label>Business Registration Number:</label>
+            <label>Business Registration:</label>
             <input required th:field="*{businessRegistration}" type="text">
         </div>
 
         <button type="submit">Register</button>
     </form>
-
-    <a th:href="@{/login}">Already have an account? Login</a>
 </div>
 </body>
 </html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Vendor Dashboard</title>
+</head>
+<body>
+<nav>
+    <div class="nav-wrapper">
+        <span th:text="${'Welcome, ' + #authentication.name}"></span>
+        <form method="post" style="display: inline;" th:action="@{/logout}">
+            <button type="submit">Logout</button>
+        </form>
+    </div>
+</nav>
+
+<div class="dashboard-container">
+    <h2>Vendor Dashboard</h2>
+
+    <div class="quick-actions">
+        <h3>Quick Actions</h3>
+        <a class="button" th:href="@{/products/new}">Add New Product</a>
+        <a class="button" th:href="@{/promotions/new}">Create Promotion</a>
+        <a class="button" th:href="@{/orders}">View Orders</a>
+    </div>
+
+    <div class="statistics">
+        <h3>Statistics</h3>
+        <!-- Add statistics placeholders -->
+        <p>Total Products: <span>0</span></p>
+        <p>Active Promotions: <span>0</span></p>
+        <p>Pending Orders: <span>0</span></p>
+    </div>
+</div>
+</body>
+</html>

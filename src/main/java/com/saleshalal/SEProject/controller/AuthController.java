@@ -1,20 +1,23 @@
 package com.saleshalal.SEProject.controller;
 
-import com.saleshalal.SEProject.model.ERole;
-import com.saleshalal.SEProject.model.UserModel;
-import com.saleshalal.SEProject.model.UserRole;
+import com.saleshalal.SEProject.model.Customer;
+import com.saleshalal.SEProject.model.Vendor;
 import com.saleshalal.SEProject.service.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Controller
 public class AuthController {
-
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
     private final UserService userService;
 
     @Autowired
@@ -22,45 +25,58 @@ public class AuthController {
         this.userService = userService;
     }
 
-    // Login - common for all users
+    // Login page (common for all)
     @GetMapping("/login")
     public String showLoginForm() {
+        logger.info("Showing login form");
         return "login";
-    }
-
-    // Registration choice page
-    @GetMapping("/register")
-    public String showRegistrationChoice() {
-        return "register-choice";  // A page where users choose customer or vendor
     }
 
     // Customer registration
     @GetMapping("/register/customer")
     public String showCustomerRegistration(Model model) {
-        model.addAttribute("user", new UserModel());
-        model.addAttribute("userType", "CUSTOMER");
+        model.addAttribute("customer", new Customer());
+        logger.info("Showing customer registration form");
         return "register/customer";
+    }
+
+    @PostMapping("/register/customer")
+    public String registerCustomer(@ModelAttribute Customer customer,
+                                   BindingResult result,
+                                   Model model) {
+        logger.info("Registering customer");
+        try {
+            userService.registerCustomer(customer);
+            return "redirect:/login?registered=true";
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
+            return "register/customer";
+        }
     }
 
     // Vendor registration
     @GetMapping("/register/vendor")
     public String showVendorRegistration(Model model) {
-        model.addAttribute("user", new UserModel());
-        model.addAttribute("userType", "VENDOR");
+        logger.info("Showing vendor registration form");
+        model.addAttribute("vendor", new Vendor());
         return "register/vendor";
     }
 
-    // todo: Handle registration for both types
-    @PostMapping("/register/{userType}")
-    public String registerUser(@PathVariable String userType,
-                               @ModelAttribute("user") UserModel user,
-                               Model model) {
+    @PostMapping("/register/vendor")
+    public String registerVendor(@ModelAttribute Vendor vendor,
+                                 BindingResult result,
+                                 Model model) {
+        logger.info("Registering vendor");
+        if (result.hasErrors()) {
+            return "register/vendor";
+        }
+
         try {
-            userService.registerUser(user, UserRole.valueOf(userType.toUpperCase()));
+            userService.registerVendor(vendor);
             return "redirect:/login?registered=true";
         } catch (Exception e) {
-            model.addAttribute("error", "Registration failed: " + e.getMessage());
-            return "register/" + userType.toLowerCase();
+            model.addAttribute("error", e.getMessage());
+            return "register/vendor";
         }
     }
 }

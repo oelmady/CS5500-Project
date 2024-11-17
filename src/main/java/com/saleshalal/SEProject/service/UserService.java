@@ -1,15 +1,17 @@
 package com.saleshalal.SEProject.service;
 
-import com.saleshalal.SEProject.model.UserModel;
+import com.saleshalal.SEProject.model.Customer;
+import com.saleshalal.SEProject.model.User;
 import com.saleshalal.SEProject.model.UserRole;
+import com.saleshalal.SEProject.model.Vendor;
+import com.saleshalal.SEProject.repository.CustomerRepository;
 import com.saleshalal.SEProject.repository.UserRepository;
 
+import com.saleshalal.SEProject.repository.VendorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -17,39 +19,55 @@ import org.springframework.stereotype.Service;
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
+    private final CustomerRepository customerRepository;
+    private final VendorRepository vendorRepository;
     private final PasswordEncoder passwordEncoder;
 
-
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository,
+                       CustomerRepository customerRepository,
+                       VendorRepository vendorRepository,
+                       PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.customerRepository = customerRepository;
+        this.vendorRepository = vendorRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
-    // todo: fix roles
-    public void registerUser(UserModel user, UserRole role) {
-        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+    public void registerCustomer(Customer customer) {
+        if (userRepository.findByEmail(customer.getEmail()).isPresent()) {
             throw new RuntimeException("Email already registered");
         }
 
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRole(role);
-        userRepository.save(user);
+        customer.setPassword(passwordEncoder.encode(customer.getPassword()));
+        customer.setRole(UserRole.CUSTOMER);
+        customerRepository.save(customer);
+    }
+
+    public void registerVendor(Vendor vendor) {
+        if (userRepository.findByEmail(vendor.getEmail()).isPresent()) {
+            throw new RuntimeException("Email already registered");
+        }
+
+        // Add vendor-specific validation
+        if (vendor.getBusinessName() == null || vendor.getBusinessRegistration() == null) {
+            throw new RuntimeException("Business details are required");
+        }
+
+        vendor.setPassword(passwordEncoder.encode(vendor.getPassword()));
+        vendor.setRole(UserRole.VENDOR);
+        vendorRepository.save(vendor);
     }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        UserModel user = userRepository.findByEmail(email)
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        return User.builder()
+        return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getEmail())
                 .password(user.getPassword())
                 .roles(user.getRole().name())
                 .build();
-    }
-
-    // todo: fix this validation
-    public boolean validateLogin(String email, String password) {
     }
 }

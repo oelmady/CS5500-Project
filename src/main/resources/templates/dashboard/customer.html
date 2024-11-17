@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Customer Dashboard</title>
+</head>
+<body>
+<nav>
+    <div class="nav-wrapper">
+        <span th:text="${'Welcome, ' + #authentication.name}"></span>
+        <form method="post" style="display: inline;" th:action="@{/logout}">
+            <button type="submit">Logout</button>
+        </form>
+    </div>
+</nav>
+
+<div class="dashboard-container">
+    <h2>Customer Dashboard</h2>
+
+    <div class="quick-actions">
+        <h3>Quick Actions</h3>
+        <a class="button" th:href="@{/products}">Browse Products</a>
+        <a class="button" th:href="@{/cart}">View Cart</a>
+        <a class="button" th:href="@{/orders}">My Orders</a>
+    </div>
+
+    <div class="recent-activity">
+        <h3>Recent Activity</h3>
+        <!-- Add activity placeholders -->
+        <p>No recent activity</p>
+    </div>
+</div>
+</body>
+</html>
