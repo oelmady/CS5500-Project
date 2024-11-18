@@ -40,6 +40,7 @@ public class AuthController {
         return "register/customer";
     }
 
+    // todo: refactor using DTO
     @PostMapping("/register/customer")
     public String registerCustomer(@ModelAttribute Customer customer,
                                    BindingResult result,
@@ -64,7 +65,8 @@ public class AuthController {
         model.addAttribute("vendor", new Vendor());
         return "register/vendor";
     }
-
+    
+    // todo: refactor using DTO
     @PostMapping("/register/vendor")
     public String registerVendor(@ModelAttribute Vendor vendor,
                                  BindingResult result,

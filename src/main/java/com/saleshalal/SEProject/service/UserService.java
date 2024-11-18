@@ -1,7 +1,7 @@
 package com.saleshalal.SEProject.service;
 
 import com.saleshalal.SEProject.model.Customer;
-import com.saleshalal.SEProject.model.User;
+import com.saleshalal.SEProject.model.AUser;
 import com.saleshalal.SEProject.model.UserRole;
 import com.saleshalal.SEProject.model.Vendor;
 import com.saleshalal.SEProject.repository.CustomerRepository;
@@ -73,7 +73,7 @@ public class UserService implements UserDetailsService {
         throw new UsernameNotFoundException("User not found");
     }
 
-    private UserDetails buildUserDetails(User user) {
+    private UserDetails buildUserDetails(AUser user) {
         return org.springframework.security.core.userdetails.User
                 .withUsername(user.getEmail())
                 .password(user.getPassword())

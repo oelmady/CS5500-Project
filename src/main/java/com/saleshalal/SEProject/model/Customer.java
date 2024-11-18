@@ -1,21 +1,27 @@
 package com.saleshalal.SEProject.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "customers")
-public class Customer extends User {
+public class Customer extends AUser {
 
-//    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
-//    private List<Order> orders = new ArrayList<>();
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long customer_id;
+    
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "shopping_cart_id", nullable = false)
+    private ShoppingCart cart = new ShoppingCart(this);
 
     public Customer(String email, String password, String name, UserRole role) {
         super(email, password, name, role);
     }
 
     public Customer() {
-
     }
 }

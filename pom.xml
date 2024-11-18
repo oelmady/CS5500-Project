@@ -7,7 +7,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.3.5</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath/>
     </parent>
     <groupId>com.saleshalal</groupId>
     <artifactId>SEProject</artifactId>
@@ -115,13 +115,12 @@
             <artifactId>velocity</artifactId>
             <version>1.7</version>
         </dependency>
-
-        
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <scope>runtime</scope>
+            <version>42.7.4</version>
         </dependency>
+
     </dependencies>
 
     <build>

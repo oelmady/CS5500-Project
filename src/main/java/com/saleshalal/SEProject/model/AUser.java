@@ -11,10 +11,7 @@ import lombok.*;
 @ToString
 @Setter
 @Getter
-public abstract class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long ID;
+public abstract class AUser {
 
     @Email(message = "Please provide a valid email address")
     @NotBlank(message = "Email is required")
@@ -34,10 +31,10 @@ public abstract class User {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    protected User() {
+    protected AUser() {
     }
 
-    public User(String email, String password, String name, UserRole role) {
+    public AUser(String email, String password, String name, UserRole role) {
         this.email = email;
         this.password = password;
         this.name = name;
