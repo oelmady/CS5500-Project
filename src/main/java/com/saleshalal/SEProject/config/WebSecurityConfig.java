@@ -21,6 +21,7 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
+<<<<<<< Updated upstream
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((authorize) -> authorize
@@ -46,6 +47,23 @@ public class WebSecurityConfig {
                 .httpBasic(withDefaults());
         return http.build();
     }
+=======
+    http
+            .csrf(AbstractHttpConfigurer::disable)
+            .authorizeHttpRequests((authorize) -> authorize
+                    .requestMatchers("/auth/*","/auth/register", "/auth/login").permitAll()
+                    .anyRequest().permitAll()
+            )
+            .formLogin(login -> login
+                    .loginPage("/auth/login")
+                    .permitAll()
+            )
+            .httpBasic(withDefaults());
+    
+
+    return http.build();
+  }
+>>>>>>> Stashed changes
 
     @Bean
     public PasswordEncoder passwordEncoder() {
