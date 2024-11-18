@@ -1,5 +1,7 @@
 package com.saleshalal.SEProject.model;
 
+import com.saleshalal.SEProject.data.CustomerDTO;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,12 +16,16 @@ public class Customer extends AUser {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long customer_id;
     
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "shopping_cart_id", nullable = false)
     private ShoppingCart cart = new ShoppingCart(this);
 
     public Customer(String email, String password, String name, UserRole role) {
         super(email, password, name, role);
+    }
+
+    public Customer(CustomerDTO customerDTO) {
+        super(customerDTO.getEmail(), customerDTO.getPassword(), customerDTO.getName(), UserRole.CUSTOMER);
     }
 
     public Customer() {

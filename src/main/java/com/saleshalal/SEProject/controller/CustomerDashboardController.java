@@ -59,5 +59,4 @@ public class CustomerDashboardController {
         model.addAttribute("activePromotions", promotionService.getActivePromotions());
         return "customer/customer-dashboard";
     }
-
 }

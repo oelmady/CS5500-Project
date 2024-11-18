@@ -10,7 +10,7 @@
     <div class="alert alert-error" th:if="${error}" th:text="${error}">
     </div>
 
-    <form method="post" th:action="@{/register/vendor}" th:object="${vendor}">
+    <form method="post" th:action="@{/register/vendor}" th:object="${vendorDTO}">
         <div>
             <label>Name:</label>
             <input required th:field="*{name}" type="text">
@@ -33,7 +33,47 @@
 
         <div>
             <label>Business Registration:</label>
-            <input required th:field="*{getBusinessNumber}" type="text">
+            <input required th:field="*{businessNumber}" type="text">
+        </div>
+
+        <div>
+            <label>Business Type:</label>
+            <input required th:field="*{businessType}" type="text">
+        </div>
+
+        <div>
+            <label>Business Description:</label>
+            <input required th:field="*{description}" type="text">
+        </div>
+
+        <div>
+            <label>Business Address:</label>
+            <input required th:field="*{address}" type="text">
+        </div>
+
+        <div>
+            <label>Business City:</label>
+            <input required th:field="*{city}" type="text">
+        </div>
+
+        <div>
+            <label>Business State:</label>
+            <input required th:field="*{state}" type="text">
+        </div>
+
+        <div>
+            <label>Business Zip:</label>
+            <input required th:field="*{zip}" type="text">
+        </div>
+
+        <div>
+            <label>Business Website:</label>
+            <input required th:field="*{website}" type="text">
+        </div>
+
+        <div>
+            <label>Business Phone:</label>
+            <input required th:field="*{phoneNumber}" type="text">
         </div>
 
         <button type="submit">Register</button>

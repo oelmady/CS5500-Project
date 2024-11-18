@@ -3,6 +3,8 @@ package com.saleshalal.SEProject.controller;
 import com.saleshalal.SEProject.model.Customer;
 import com.saleshalal.SEProject.model.Vendor;
 import com.saleshalal.SEProject.service.UserService;
+import com.saleshalal.SEProject.data.CustomerDTO;
+import com.saleshalal.SEProject.data.VendorDTO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 @Controller
 public class AuthController {
+
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
     private final UserService userService;
 
@@ -35,24 +38,28 @@ public class AuthController {
     // Customer registration
     @GetMapping("/register/customer")
     public String showCustomerRegistration(Model model) {
-        model.addAttribute("customer", new Customer());
+        model.addAttribute("customerDTO", new CustomerDTO());
         logger.info("Showing customer registration form");
         return "customer/customer-registration";
     }
 
-    // todo: refactor using DTO
+    // Customer registration using DTO
     @PostMapping("/register/customer")
-    public String registerCustomer(@ModelAttribute Customer customer,
+    public String registerCustomer(@ModelAttribute CustomerDTO customerDTO,
                                    BindingResult result,
                                    Model model) {
-        logger.info("Registering customer");
+        logger.info("Registering customer with email: {}", customerDTO.getEmail());
+
         if (result.hasErrors()) {
+            logger.warn("Validation errors found during customer registration");
             return "customer/customer-registration";
         }
         try {
-            userService.registerCustomer(customer);
+            userService.registerCustomer(customerDTO);
+            logger.info("Customer registered successfully: {}", customerDTO.getEmail());
             return "redirect:/login?registered=true";
         } catch (Exception e) {
+            logger.error("Error occurred while registering customer: {}", e.getMessage(), e);
             model.addAttribute("error", e.getMessage());
             return "customer/customer-registration";
         }
@@ -62,24 +69,28 @@ public class AuthController {
     @GetMapping("/register/vendor")
     public String showVendorRegistration(Model model) {
         logger.info("Showing vendor registration form");
-        model.addAttribute("vendor", new Vendor());
+        model.addAttribute("vendorDTO", new VendorDTO());
         return "vendor/vendor-registration";
     }
 
-    // todo: refactor using DTO
+    // Refactored vendor registration using DTO
     @PostMapping("/register/vendor")
-    public String registerVendor(@ModelAttribute Vendor vendor,
+    public String registerVendor(@ModelAttribute VendorDTO vendorDTO,
                                  BindingResult result,
                                  Model model) {
-        logger.info("Registering vendor");
+        logger.info("Registering vendor with business name: {}", vendorDTO.getBusinessName());
+
         if (result.hasErrors()) {
+            logger.warn("Validation errors found during vendor registration");
             return "vendor/vendor-registration";
         }
 
         try {
-            userService.registerVendor(vendor);
+            userService.registerVendor(vendorDTO);
+            logger.info("Vendor registered successfully: {}", vendorDTO.getBusinessName());
             return "redirect:/login?registered=true";
         } catch (Exception e) {
+            logger.error("Error occurred while registering vendor: {}", e.getMessage(), e);
             model.addAttribute("error", e.getMessage());
             return "vendor/vendor-registration";
         }

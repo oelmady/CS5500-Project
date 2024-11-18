@@ -10,7 +10,7 @@
     <div class="alert alert-error" th:if="${error}" th:text="${error}">
     </div>
 
-    <form method="post" th:action="@{/register/customer}" th:object="${customer}">
+    <form method="post" th:action="@{/register/customer}" th:object="${customerDTO}">
         <div>
             <label>Name:</label>
             <input required th:field="*{name}" type="text">

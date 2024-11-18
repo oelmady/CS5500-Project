@@ -1,5 +1,7 @@
 package com.saleshalal.SEProject.service;
 
+import com.saleshalal.SEProject.data.CustomerDTO;
+import com.saleshalal.SEProject.data.VendorDTO;
 import com.saleshalal.SEProject.model.Customer;
 import com.saleshalal.SEProject.model.AUser;
 import com.saleshalal.SEProject.model.UserRole;
@@ -34,27 +36,21 @@ public class UserService implements UserDetailsService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public void registerCustomer(Customer customer) {
-        if (customerRepository.findByEmail(customer.getEmail()).isPresent()) {
+    public void registerCustomer(CustomerDTO customerDTO) {
+        if (customerRepository.findByEmail(customerDTO.getEmail()).isPresent()) {
             throw new RuntimeException("Email already registered");
         }
-
-        customer.setPassword(passwordEncoder.encode(customer.getPassword()));
-        customer.setRole(UserRole.CUSTOMER);
+        customerDTO.setPassword(passwordEncoder.encode(customerDTO.getPassword()));
+        Customer customer = new Customer(customerDTO);
         customerRepository.save(customer);
     }
 
-    public void registerVendor(Vendor vendor) {
-        if (vendorRepository.findByEmail(vendor.getEmail()).isPresent()) {
+    public void registerVendor(VendorDTO vendorDTO) {
+        if (vendorRepository.findByEmail(vendorDTO.getEmail()).isPresent()) {
             throw new RuntimeException("Email already registered");
         }
-
-        if (vendor.getBusinessName() == null || vendor.getBusinessNumber() == null) {
-            throw new RuntimeException("Business details are required");
-        }
-
-        vendor.setPassword(passwordEncoder.encode(vendor.getPassword()));
-        vendor.setRole(UserRole.VENDOR);
+        vendorDTO.setPassword(passwordEncoder.encode(vendorDTO.getPassword()));
+        Vendor vendor = new Vendor(vendorDTO);
         vendorRepository.save(vendor);
     }
 
