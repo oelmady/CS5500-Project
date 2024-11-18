@@ -11,7 +11,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.security.Principal;
 
-// Vendor Dashboard Controller
+/*
+Vendor Dashboard:
+
+List all vendor's promotions
+Create new promotions
+Edit existing promotions
+Delete promotions
+Security checks to ensure vendors can only modify their own promotions
+todo Thymeleaf templates for each view:
+vendor/dashboard.html
+vendor/create-promotion.html
+vendor/edit-promotion.html
+ */
 @Controller
 @RequestMapping("/vendor-dashboard")
 public class VendorDashboardController {
