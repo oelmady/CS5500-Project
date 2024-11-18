@@ -2,8 +2,12 @@ package com.saleshalal.SEProject.model;
 
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 // Cart Item Entity
+@Getter
+@Setter
 @Entity
 @Table(name = "cart_items")
 public class CartItem {
@@ -15,12 +19,20 @@ public class CartItem {
     @JoinColumn(name = "shopping_cart_id", nullable = false)
     private ShoppingCart shoppingCart;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "promotion_id", nullable = false)
     private Promotion promotion;
 
     @Column(nullable = false)
     private Integer quantity;
 
-    // Constructors, getters, and setters
+    public CartItem(ShoppingCart shoppingCart, Promotion promotion, Integer quantity) {
+        this.shoppingCart = shoppingCart;
+        this.promotion = promotion;
+        this.quantity = quantity;
+    }
+
+    public CartItem() {
+    }
+
 }

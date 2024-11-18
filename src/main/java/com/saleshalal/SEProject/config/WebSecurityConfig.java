@@ -24,9 +24,11 @@ public class WebSecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/", "/register/**", "/login", "/css/**").permitAll()
-                        .requestMatchers("/dashboard/vendor").hasRole("VENDOR")
-                        .requestMatchers("/dashboard/customer").hasRole("CUSTOMER")
+                        .requestMatchers("/", "/register/vendor", "register/customer", "/login",
+                                "/css/**")
+                        .permitAll()
+                        .requestMatchers("/vendor/**").hasRole("VENDOR")
+                        .requestMatchers("/customer/**").hasRole("CUSTOMER")
                         .requestMatchers("/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
@@ -44,7 +46,7 @@ public class WebSecurityConfig {
                 .httpBasic(withDefaults());
         return http.build();
     }
-    
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

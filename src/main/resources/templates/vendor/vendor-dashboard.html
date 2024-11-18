@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Vendor Dashboard</title>
+</head>
+<body>
+<h1>Welcome, <span th:text="${vendor.name}">Vendor</span></h1>
+
+<a th:href="@{/vendor/promotions/new}">Create New Promotion</a>
+
+<h2>Your Promotions</h2>
+<table>
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Available Quantity</th>
+        <th>Expiry Date</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="promotion : ${promotions}">
+        <td th:text="${promotion.name}">Promotion Name</td>
+        <td th:text="${promotion.price}">Price</td>
+        <td th:text="${promotion.availableQuantity}">Quantity</td>
+        <td th:text="${promotion.expiryDate}">Expiry</td>
+        <td>
+            <a th:href="@{/vendor/promotions/edit/{id}(id=${promotion.id})}">Edit</a>
+            <form method="post" th:action="@{/vendor/promotions/delete/{id}(id=${promotion.id})}">
+                <button type="submit">Delete</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-  <html xmlns:th="http://www.thymeleaf.org">
-    <head>
-      <title>Thymeleaf Demo</title>
-    </head>
-    <body>
-      <h1 th:text="'Hello, ' + ${name} + '!'">Hello, World!</h1>
-    </body>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<h1>Welcome to our E-Commerce Platform</h1>
+<a th:href="@{/login}">Login</a>
+<a th:href="@{/register/customer}">Register as Customer</a>
+<a th:href="@{/register/vendor}">Register as Vendor</a>
+</body>
 </html>

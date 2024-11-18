@@ -37,7 +37,7 @@ public class AuthController {
     public String showCustomerRegistration(Model model) {
         model.addAttribute("customer", new Customer());
         logger.info("Showing customer registration form");
-        return "register/customer";
+        return "customer/customer-registration";
     }
 
     // todo: refactor using DTO
@@ -47,14 +47,14 @@ public class AuthController {
                                    Model model) {
         logger.info("Registering customer");
         if (result.hasErrors()) {
-            return "register/customer";
+            return "customer/customer-registration";
         }
         try {
             userService.registerCustomer(customer);
             return "redirect:/login?registered=true";
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
-            return "register/customer";
+            return "customer/customer-registration";
         }
     }
 
@@ -63,9 +63,9 @@ public class AuthController {
     public String showVendorRegistration(Model model) {
         logger.info("Showing vendor registration form");
         model.addAttribute("vendor", new Vendor());
-        return "register/vendor";
+        return "vendor/vendor-registration";
     }
-    
+
     // todo: refactor using DTO
     @PostMapping("/register/vendor")
     public String registerVendor(@ModelAttribute Vendor vendor,
@@ -73,7 +73,7 @@ public class AuthController {
                                  Model model) {
         logger.info("Registering vendor");
         if (result.hasErrors()) {
-            return "register/vendor";
+            return "vendor/vendor-registration";
         }
 
         try {
@@ -81,7 +81,7 @@ public class AuthController {
             return "redirect:/login?registered=true";
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
-            return "register/vendor";
+            return "vendor/vendor-registration";
         }
     }
 }
