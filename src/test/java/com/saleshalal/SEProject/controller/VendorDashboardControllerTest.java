@@ -77,14 +77,19 @@ class VendorDashboardControllerTest {
     @Test
     void createPromotion_ValidPromotion_RedirectsToDashboard() {
         Vendor vendor = new Vendor();
+        String email = "vendor@example.com";
+        vendor.setEmail(email);
         Promotion promotion = new Promotion();
-        when(vendorRepository.findByEmail(anyString())).thenReturn(Optional.of(vendor));
-        when(principal.getName()).thenReturn("vendor@example.com");
+        // Mock the vendorRepository to return the vendor when findByEmail is called with the email
+        when(vendorRepository.findByEmail(email)).thenReturn(Optional.of(vendor));
+        when(principal.getName()).thenReturn(email);
 
+        // Call the createPromotion method
         String viewName = vendorDashboardController.createPromotion(promotion, principal);
 
+        // Verify that the promotion was saved and the view name is correct
         assertEquals("redirect:/vendor-dashboard", viewName);
-        verify(promotionRepository, times(1)).save(promotion);
+        verify(promotionService, times(1)).savePromotion(promotion);
     }
 
     /**
@@ -94,6 +99,7 @@ class VendorDashboardControllerTest {
     void createPromotionForm_ReturnsCreatePromotionView() {
         String viewName = vendorDashboardController.showCreatePromotionForm(model);
 
+        // Verify that the view name is correct and that the promotion attribute was added to the model
         assertEquals("vendor/create-promotion", viewName);
         verify(model, times(1)).addAttribute(eq("promotion"), any(Promotion.class));
     }
@@ -104,10 +110,13 @@ class VendorDashboardControllerTest {
     @Test
     void showEditPromotionForm_PromotionExists_ReturnsEditPromotionView() {
         Promotion promotion = new Promotion();
+        // Mock the promotionService to return the promotion
         when(promotionService.getPromotionById(1L)).thenReturn(promotion);
 
+        // Call the showEditPromotionForm method
         String viewName = vendorDashboardController.showEditPromotionForm(1L, model, principal);
 
+        // Verify that the view name is correct and that the promotion attribute was added to the model
         assertEquals("vendor/edit-promotion", viewName);
         verify(model, times(1)).addAttribute("promotion", promotion);
     }
@@ -125,7 +134,7 @@ class VendorDashboardControllerTest {
 
     @Test
     void showEditPromotionForm_PromotionDoesNotBelongToPrincipal_ThrowsException() {
-
+        // todo
     }
 
     /**

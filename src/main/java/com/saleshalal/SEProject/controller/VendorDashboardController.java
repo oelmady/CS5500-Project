@@ -93,7 +93,7 @@ public class VendorDashboardController {
         Vendor vendor = vendorRepository.findByEmail(principal.getName())
                 .orElseThrow(() -> new ResourceNotFoundException("Vendor not found"));
         promotion.setVendor(vendor);
-
+        promotionService.savePromotion(promotion);
         return "redirect:/vendor-dashboard";
     }
 
@@ -106,19 +106,14 @@ public class VendorDashboardController {
      */
     @GetMapping("/edit-promotion/{id}")
     public String showEditPromotionForm(@PathVariable Long id, Model model, Principal principal) {
-        try {
-            Promotion promotion = promotionService.getPromotionById(id);
-            if (promotion == null || !Objects.equals(
-                    promotion.getVendor().getName(),
-                    principal.getName())) {
-                throw new ResourceNotFoundException("Promotion not found");
-            }
-            model.addAttribute("promotion", promotion);
-            return "vendor/edit-promotion";
-
-        } catch (ResourceNotFoundException e) {
+        Promotion promotion = promotionService.getPromotionById(id);
+        if (promotion == null || !Objects.equals(
+                promotion.getVendor().getName(),
+                principal.getName())) {
             throw new ResourceNotFoundException("Promotion not found");
         }
+        model.addAttribute("promotion", promotion);
+        return "vendor/edit-promotion";
     }
 
     /**
