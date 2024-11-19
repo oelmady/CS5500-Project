@@ -5,7 +5,14 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-// Cart Item Entity
+import java.math.BigDecimal;
+
+/**
+ * CartItem Entity
+ * Represents an item in a shopping cart.
+ * Contains a reference to the ShoppingCart entity and the Promotion entity.
+ * Getters for Promotion details.
+ */
 @Getter
 @Setter
 @Entity
@@ -35,4 +42,15 @@ public class CartItem {
     public CartItem() {
     }
 
+    public String getName() {
+        return promotion.getName();
+    }
+
+    public BigDecimal getPrice() {
+        return promotion.getPrice();
+    }
+
+    public Integer getAvailableQuantity() {
+        return promotion.getAvailableQuantity();
+    }
 }

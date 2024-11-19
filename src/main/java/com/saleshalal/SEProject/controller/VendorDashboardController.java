@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.Objects;
 
 /*
 Vendor Dashboard:
@@ -104,13 +105,17 @@ public class VendorDashboardController {
      * @return the edit promotion view
      */
     @GetMapping("/edit-promotion/{id}")
-    public String showEditPromotionForm(@PathVariable Long id, Model model) {
+    public String showEditPromotionForm(@PathVariable Long id, Model model, Principal principal) {
         try {
             Promotion promotion = promotionService.getPromotionById(id);
+            if (!Objects.equals(promotion.getVendor().getName(), principal.getName())) {
+                throw new ResourceNotFoundException("Promotion not found");
+            }
             model.addAttribute("promotion", promotion);
             return "vendor/edit-promotion";
-        } catch (Exception e) {
-            throw new RuntimeException("Error editing promotion", e);
+
+        } catch (ResourceNotFoundException e) {
+            throw new ResourceNotFoundException("Promotion not found");
         }
     }
 
@@ -123,14 +128,10 @@ public class VendorDashboardController {
      */
     @PostMapping("/edit-promotion/{id}")
     public String editPromotion(@PathVariable Long id, @ModelAttribute Promotion promotionDetails) {
-        try {
-            Promotion promotion = promotionService.getPromotionById(id);
-            promotion.setName(promotionDetails.getName());
-            promotion.setDescription(promotionDetails.getDescription());
-            promotionService.savePromotion(promotion);
-            return "redirect:/vendor-dashboard";
-        } catch (Exception e) {
-            throw new RuntimeException("Error editing promotion", e);
-        }
+        Promotion promotion = promotionService.getPromotionById(id);
+        promotion.setName(promotionDetails.getName());
+        promotion.setDescription(promotionDetails.getDescription());
+        promotionService.savePromotion(promotion);
+        return "redirect:/vendor-dashboard";
     }
 }

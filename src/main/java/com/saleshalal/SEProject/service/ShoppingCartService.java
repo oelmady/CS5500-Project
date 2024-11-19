@@ -47,11 +47,7 @@ public class ShoppingCartService {
 
         // Check availability
         if (promotion.getAvailableQuantity() < quantity) {
-            try {
-                throw new InsufficientQuantityException("Not enough promotions available");
-            } catch (InsufficientQuantityException e) {
-                throw new RuntimeException(e);
-            }
+            throw new RuntimeException(new InsufficientQuantityException("Not enough items available"));
         }
 
         // Check if promotion already in cart
@@ -94,5 +90,16 @@ public class ShoppingCartService {
 
         // Remove cart item
         cartItemRepository.delete(cartItem);
+    }
+
+    /**
+     * Update cart item quantity and promotion availability.
+     *
+     * @param cartItemId the ID of the cart item to update
+     * @param quantity   the new quantity
+     */
+    @Transactional
+    public void updateCartItemQuantity(Long cartItemId, Integer quantity) {
+        //todo
     }
 }
