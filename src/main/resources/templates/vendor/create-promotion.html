@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Create Promotion</title>
+</head>
+<body>
+<div class="form-container">
+    <h2>Create Promotion</h2>
+    <form method="post" th:action="@{/vendor-dashboard/create-promotion}" th:object="${promotion}">
+        <div>
+            <label>Name:</label>
+            <input required th:field="*{name}" type="text">
+        </div>
+        <div>
+            <label>Description:</label>
+            <input required th:field="*{description}" type="text">
+        </div>
+        <button type="submit">Create</button>
+    </form>
+</div>
+</body>
+</html>

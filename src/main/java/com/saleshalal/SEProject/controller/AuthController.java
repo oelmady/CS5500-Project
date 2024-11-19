@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Implements login and registration functionality.
+ */
 @Controller
 public class AuthController {
 
@@ -28,14 +31,23 @@ public class AuthController {
         this.userService = userService;
     }
 
-    // Login page (common for all)
+    /**
+     * Shows the login form.
+     *
+     * @return the view name to be rendered
+     */
     @GetMapping("/login")
     public String showLoginForm() {
         logger.info("Showing login form");
         return "login";
     }
 
-    // Customer registration
+    /**
+     * Shows the customer registration form.
+     *
+     * @param model the model to pass data to the view
+     * @return the view name to be rendered
+     */
     @GetMapping("/register/customer")
     public String showCustomerRegistration(Model model) {
         model.addAttribute("customerDTO", new CustomerDTO());
@@ -43,7 +55,14 @@ public class AuthController {
         return "customer/customer-registration";
     }
 
-    // Customer registration using DTO
+    /**
+     * Handles the customer registration form submission.
+     *
+     * @param customerDTO the data transfer object containing customer registration details
+     * @param result      the binding result for validation errors
+     * @param model       the model to pass data to the view
+     * @return the view name to be rendered
+     */
     @PostMapping("/register/customer")
     public String registerCustomer(@ModelAttribute CustomerDTO customerDTO,
                                    BindingResult result,
@@ -65,7 +84,12 @@ public class AuthController {
         }
     }
 
-    // Vendor registration
+    /**
+     * Shows the vendor registration form.
+     *
+     * @param model the model to pass data to the view
+     * @return the view name to be rendered
+     */
     @GetMapping("/register/vendor")
     public String showVendorRegistration(Model model) {
         logger.info("Showing vendor registration form");
@@ -73,7 +97,15 @@ public class AuthController {
         return "vendor/vendor-registration";
     }
 
-    // Refactored vendor registration using DTO
+
+    /**
+     * Handles the vendor registration form submission.
+     *
+     * @param vendorDTO the data transfer object containing vendor registration details
+     * @param result    the binding result for validation errors
+     * @param model     the model to pass data to the view
+     * @return the view name to be rendered
+     */
     @PostMapping("/register/vendor")
     public String registerVendor(@ModelAttribute VendorDTO vendorDTO,
                                  BindingResult result,

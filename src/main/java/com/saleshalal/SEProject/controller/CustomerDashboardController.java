@@ -8,6 +8,7 @@ import com.saleshalal.SEProject.repository.PromotionRepository;
 import com.saleshalal.SEProject.service.PromotionService;
 import com.saleshalal.SEProject.service.ShoppingCartService;
 import org.apache.velocity.exception.ResourceNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,6 +32,10 @@ todo create corresponding Thymeleaf templates for each view:
 customer/dashboard.html
 customer/cart.html
  */
+
+/**
+ * Controller for the customer dashboard.
+ */
 @Controller
 @RequestMapping("/customer-dashboard")
 public class CustomerDashboardController {
@@ -39,12 +44,20 @@ public class CustomerDashboardController {
     private final ShoppingCartService shoppingCartService;
     private final CustomerRepository customerRepository;
 
+    @Autowired
     public CustomerDashboardController(PromotionService promotionService, PromotionRepository promotionRepository, ShoppingCartService shoppingCartService, CustomerRepository customerRepository) {
         this.promotionService = promotionService;
         this.shoppingCartService = shoppingCartService;
         this.customerRepository = customerRepository;
     }
 
+    /**
+     * Displays the customer dashboard.
+     *
+     * @param model     the model to pass data to the view
+     * @param principal the currently authenticated user
+     * @return the view name to be rendered
+     */
     @GetMapping
     public String customerDashboard(Model model, Principal principal) {
         Customer customer = customerRepository.findByEmail(principal.getName())

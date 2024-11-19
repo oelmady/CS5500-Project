@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Edit Promotion</title>
+</head>
+<body>
+<div class="form-container">
+    <h2>Edit Promotion</h2>
+    <form method="post"
+          th:action="@{/vendor-dashboard/edit-promotion/{id}(id=${promotion.promotion_id})}"
+          th:object="${promotion}">
+        <div>
+            <label>Name:</label>
+            <input required th:field="*{name}" type="text">
+        </div>
+        <div>
+            <label>Description:</label>
+            <input required th:field="*{description}" type="text">
+        </div>
+        <button type="submit">Save</button>
+    </form>
+</div>
+</body>
+</html>

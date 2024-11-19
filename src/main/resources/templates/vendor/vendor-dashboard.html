@@ -8,6 +8,12 @@
 
 <a th:href="@{/vendor/promotions/new}">Create New Promotion</a>
 
+<div class="vendor-info">
+    <h3>Vendor Information</h3>
+    <p>Name: <span th:text="${vendor.name}"></span></p>
+    <p>Email: <span th:text="${vendor.email}"></span></p>
+</div>
+
 <h2>Your Promotions</h2>
 <table>
     <thead>
@@ -34,5 +40,17 @@
     </tr>
     </tbody>
 </table>
+
+<div class="promotions">
+    <h3>Edit Your Promotions</h3>
+    <ul>
+        <li th:each="promotion : ${promotions}">
+            <span th:text="${promotion.name}"></span> -
+            <span th:text="${promotion.description}"></span>
+            <a th:href="@{/vendor-dashboard/edit-promotion/{id}(id=${promotion.id})}">Edit</a>
+        </li>
+    </ul>
+    <a th:href="@{/vendor-dashboard/create-promotion}">Create New Promotion</a>
+</div>
 </body>
 </html>

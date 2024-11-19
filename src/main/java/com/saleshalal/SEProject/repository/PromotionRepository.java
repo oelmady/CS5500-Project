@@ -17,4 +17,6 @@ public interface PromotionRepository
     List<Promotion> findByNameContaining(String name);
 
     List<Promotion> findByPriceBetween(BigDecimal min, BigDecimal max);
+
+    List<Promotion> findByVendorId(Long id);
 }

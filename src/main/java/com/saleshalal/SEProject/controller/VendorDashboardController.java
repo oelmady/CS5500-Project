@@ -1,13 +1,15 @@
 package com.saleshalal.SEProject.controller;
 
+import com.saleshalal.SEProject.model.Promotion;
 import com.saleshalal.SEProject.model.Vendor;
+import com.saleshalal.SEProject.repository.PromotionRepository;
 import com.saleshalal.SEProject.repository.VendorRepository;
 import com.saleshalal.SEProject.service.PromotionService;
 import org.apache.velocity.exception.ResourceNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
@@ -31,11 +33,19 @@ public class VendorDashboardController {
     private final PromotionService promotionService;
     private final VendorRepository vendorRepository;
 
-    public VendorDashboardController(PromotionService promotionService, VendorRepository vendorRepository) {
+    @Autowired
+    public VendorDashboardController(PromotionService promotionService, VendorRepository vendorRepository, PromotionRepository promotionRepository) {
         this.promotionService = promotionService;
         this.vendorRepository = vendorRepository;
     }
 
+    /**
+     * Displays the vendor dashboard.
+     *
+     * @param model     the vendor model to pass data to the view
+     * @param principal the currently authenticated user
+     * @return the vendor dashboard view
+     */
     @GetMapping
     public String vendorDashboard(Model model, Principal principal) {
         Vendor vendor = vendorRepository.findByEmail(principal.getName())
@@ -46,6 +56,81 @@ public class VendorDashboardController {
         return "vendor/vendor-dashboard";
     }
 
-    // @PostMapping("/create-promotion")
+    /**
+     * Displays the create promotion form.
+     *
+     * @param model the model to pass data to the view
+     * @return the create promotion view
+     */
+    @GetMapping("/create-promotion")
+    public String createPromotion(Model model) {
+        model.addAttribute("promotion", new Promotion());
+        return "vendor/create-promotion";
+    }
 
+    /**
+     * Handles the create promotion form submission.
+     *
+     * @param model the model to pass data to the view
+     * @return the create promotion view
+     */
+    @GetMapping("/create-promotion")
+    public String showCreatePromotionForm(Model model) {
+        model.addAttribute("promotion", new Promotion());
+        return "vendor/create-promotion";
+    }
+
+    /**
+     * Handles the create promotion form submission.
+     *
+     * @param promotion the promotion to create
+     * @param principal the currently authenticated user
+     * @return the vendor dashboard view
+     */
+    @PostMapping("/create-promotion")
+    public String createPromotion(@ModelAttribute Promotion promotion, Principal principal) {
+        Vendor vendor = vendorRepository.findByEmail(principal.getName())
+                .orElseThrow(() -> new ResourceNotFoundException("Vendor not found"));
+        promotion.setVendor(vendor);
+
+        return "redirect:/vendor-dashboard";
+    }
+
+    /**
+     * Displays the edit promotion form.
+     *
+     * @param id    the ID of the promotion to edit
+     * @param model the model to pass data to the view
+     * @return the edit promotion view
+     */
+    @GetMapping("/edit-promotion/{id}")
+    public String showEditPromotionForm(@PathVariable Long id, Model model) {
+        try {
+            Promotion promotion = promotionService.getPromotionById(id);
+            model.addAttribute("promotion", promotion);
+            return "vendor/edit-promotion";
+        } catch (Exception e) {
+            throw new RuntimeException("Error editing promotion", e);
+        }
+    }
+
+    /**
+     * Handles the edit promotion form submission.
+     *
+     * @param id               the ID of the promotion to update
+     * @param promotionDetails the promotion details to update
+     * @return the vendor dashboard view
+     */
+    @PostMapping("/edit-promotion/{id}")
+    public String editPromotion(@PathVariable Long id, @ModelAttribute Promotion promotionDetails) {
+        try {
+            Promotion promotion = promotionService.getPromotionById(id);
+            promotion.setName(promotionDetails.getName());
+            promotion.setDescription(promotionDetails.getDescription());
+            promotionService.savePromotion(promotion);
+            return "redirect:/vendor-dashboard";
+        } catch (Exception e) {
+            throw new RuntimeException("Error editing promotion", e);
+        }
+    }
 }

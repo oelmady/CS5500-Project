@@ -16,17 +16,32 @@
 <div class="dashboard-container">
     <h2>Customer Dashboard</h2>
 
-    <div class="quick-actions">
-        <h3>Quick Actions</h3>
-        <a class="button" th:href="@{/products}">Browse Products</a>
-        <a class="button" th:href="@{/cart}">View Cart</a>
-        <a class="button" th:href="@{/orders}">My Orders</a>
+    <div class="customer-info">
+        <h3>Customer Information</h3>
+        <p>Name: <span th:text="${customer.name}"></span></p>
+        <p>Email: <span th:text="${customer.email}"></span></p>
     </div>
 
-    <div class="recent-activity">
-        <h3>Recent Activity</h3>
-        <!-- Add activity placeholders -->
-        <p>No recent activity</p>
+    <div class="cart-details">
+        <h3>Shopping Cart</h3>
+        <ul>
+            <li th:each="item : ${cartItems}">
+                <span th:text="${item.getName()}"></span> -
+                <span th:text="${item.quantity}"></span> x
+                <span th:text="${item.getPrice()}"></span>
+            </li>
+        </ul>
+        <p>Total: <span th:text="${cartTotal}"></span></p>
+    </div>
+
+    <div class="active-promotions">
+        <h3>Active Promotions</h3>
+        <ul>
+            <li th:each="promotion : ${activePromotions}">
+                <span th:text="${promotion.name}"></span> -
+                <span th:text="${promotion.description}"></span>
+            </li>
+        </ul>
     </div>
 </div>
 </body>
