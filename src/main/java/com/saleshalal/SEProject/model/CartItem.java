@@ -50,7 +50,4 @@ public class CartItem {
         return promotion.getPrice();
     }
 
-    public Integer getAvailableQuantity() {
-        return promotion.getAvailableQuantity();
-    }
 }

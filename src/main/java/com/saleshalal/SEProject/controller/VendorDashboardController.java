@@ -108,7 +108,9 @@ public class VendorDashboardController {
     public String showEditPromotionForm(@PathVariable Long id, Model model, Principal principal) {
         try {
             Promotion promotion = promotionService.getPromotionById(id);
-            if (!Objects.equals(promotion.getVendor().getName(), principal.getName())) {
+            if (promotion == null || !Objects.equals(
+                    promotion.getVendor().getName(),
+                    principal.getName())) {
                 throw new ResourceNotFoundException("Promotion not found");
             }
             model.addAttribute("promotion", promotion);
