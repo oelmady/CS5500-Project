@@ -20,6 +20,7 @@ import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
@@ -76,5 +77,44 @@ class UserServiceTest {
         userService.registerVendor(vendorDTO);
 
         verify(vendorRepository).save(any(Vendor.class));
+    }
+
+    /**
+     * Tests that a user can be loaded by email.
+     */
+    @Test
+    void loadUserByUsername() {
+        String email = "test@example.com";
+        Customer customer = new Customer();
+        customer.setEmail(email);
+        customer.setPassword("password");
+        customer.setRole(UserRole.CUSTOMER);
+
+        // Mock that the customer exists
+        when(customerRepository.findByEmail(email)).thenReturn(Optional.of(customer));
+
+        UserDetails userDetails = userService.loadUserByUsername(email);
+
+        // Check that the user details are correct
+        assertNotNull(userDetails);
+        assertEquals(email, userDetails.getUsername());
+        verify(customerRepository).findByEmail(email);
+    }
+
+    /**
+     * Tests that a UsernameNotFoundException is thrown when the user is not found.
+     */
+    @Test
+    void loadUserByUsername_UserNotFound() {
+        String email = "notfound@example.com";
+
+        // Mock that the user does not exist
+        when(customerRepository.findByEmail(email)).thenReturn(Optional.empty());
+        when(vendorRepository.findByEmail(email)).thenReturn(Optional.empty());
+
+        // Check that a UsernameNotFoundException is thrown
+        assertThrows(UsernameNotFoundException.class, () -> userService.loadUserByUsername(email));
+        verify(customerRepository).findByEmail(email);
+        verify(vendorRepository).findByEmail(email);
     }
 }

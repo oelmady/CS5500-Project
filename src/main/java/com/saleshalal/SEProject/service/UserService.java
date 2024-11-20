@@ -11,6 +11,7 @@ import com.saleshalal.SEProject.repository.CustomerRepository;
 import com.saleshalal.SEProject.repository.VendorRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -100,11 +101,32 @@ public class UserService implements UserDetailsService {
      * @return the UserDetails object
      */
     private UserDetails buildUserDetails(AUser user) {
-        return org.springframework.security.core.userdetails.User
-                .withUsername(user.getEmail())
+        return User.withUsername(user.getEmail())
                 .password(user.getPassword())
                 .roles(user.getRole().name())
                 .build();
+    }
+
+    /**
+     * Checks if a user is a customer.
+     *
+     * @param email the email to check
+     * @return true if the user is registered as a customer
+     */
+    public boolean isCustomer(String email) {
+        // check customer repository
+        return customerRepository.findByEmail(email).isPresent();
+    }
+
+    /**
+     * Checks if a user is a vendor.
+     *
+     * @param email the email to check
+     * @return true if the user is registered as a vendor
+     */
+    public boolean isVendor(String email) {
+        // check vendor repository
+        return vendorRepository.findByEmail(email).isPresent();
     }
 }
 

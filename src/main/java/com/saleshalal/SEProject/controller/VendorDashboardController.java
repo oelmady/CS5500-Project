@@ -43,7 +43,7 @@ public class VendorDashboardController {
     /**
      * Logs a user into the vendor dashboard if they are a registered vendor.
      */
-    @GetMapping("/login")
+    @PostMapping("/login")
     public String loginToVendorDashboard(Principal principal) {
         Vendor vendor = vendorRepository.findByEmail(principal.getName())
                 .orElseThrow(() -> new ResourceNotFoundException("Vendor not found"));

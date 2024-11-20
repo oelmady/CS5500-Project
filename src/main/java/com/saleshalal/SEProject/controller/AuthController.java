@@ -6,6 +6,7 @@ import com.saleshalal.SEProject.service.UserService;
 import com.saleshalal.SEProject.data.CustomerDTO;
 import com.saleshalal.SEProject.data.VendorDTO;
 
+import org.apache.velocity.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.security.Principal;
 
 /**
  * Implements login and registration functionality.
@@ -46,7 +49,7 @@ public class AuthController {
      * Shows the customer registration form.
      *
      * @param model the model to pass data to the view
-     * @return the view name to be rendered
+     * @return the customer registration view to be rendered
      */
     @GetMapping("/register/customer")
     public String showCustomerRegistration(Model model) {
@@ -61,7 +64,7 @@ public class AuthController {
      * @param customerDTO the data transfer object containing customer registration details
      * @param result      the binding result for validation errors
      * @param model       the model to pass data to the view
-     * @return the view name to be rendered
+     * @return the customer registration view to be rendered
      */
     @PostMapping("/register/customer")
     public String registerCustomer(@ModelAttribute CustomerDTO customerDTO,
@@ -88,7 +91,7 @@ public class AuthController {
      * Shows the vendor registration form.
      *
      * @param model the model to pass data to the view
-     * @return the view name to be rendered
+     * @return the vendor registration view name to be rendered
      */
     @GetMapping("/register/vendor")
     public String showVendorRegistration(Model model) {
@@ -123,6 +126,24 @@ public class AuthController {
             logger.error("Error occurred while registering vendor: {}", e.getMessage(), e);
             model.addAttribute("error", e.getMessage());
             return "vendor/vendor-registration";
+        }
+    }
+
+    /**
+     * Logs a user into the appropriate dashboard based on their role.
+     *
+     * @param principal the currently authenticated user
+     * @return the dashboard view to be rendered
+     */
+    @PostMapping("/login")
+    public String login(Principal principal) {
+        String email = principal.getName();
+        if (userService.isCustomer(email)) {
+            return "redirect:/customer-dashboard";
+        } else if (userService.isVendor(email)) {
+            return "redirect:/vendor-dashboard";
+        } else {
+            throw new ResourceNotFoundException("User not found");
         }
     }
 }

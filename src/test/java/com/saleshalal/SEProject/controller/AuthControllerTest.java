@@ -3,6 +3,7 @@ package com.saleshalal.SEProject.controller;
 import com.saleshalal.SEProject.data.CustomerDTO;
 import com.saleshalal.SEProject.data.VendorDTO;
 import com.saleshalal.SEProject.service.UserService;
+import org.apache.velocity.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -10,6 +11,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+
+import java.security.Principal;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -55,7 +58,7 @@ class AuthControllerTest {
 
         String viewName = authController.registerCustomer(customerDTO, bindingResult, model);
 
-        assertEquals("redirect:/login?registered=true", viewName);
+        assertEquals("redirect:/login", viewName);
         verify(userService, times(1)).registerCustomer(customerDTO);
     }
 
@@ -97,7 +100,7 @@ class AuthControllerTest {
 
         String viewName = authController.registerVendor(vendorDTO, bindingResult, model);
 
-        assertEquals("redirect:/login?registered=true", viewName);
+        assertEquals("redirect:/login", viewName);
         verify(userService, times(1)).registerVendor(vendorDTO);
     }
 
@@ -122,5 +125,37 @@ class AuthControllerTest {
 
         assertEquals("vendor/vendor-registration", viewName);
         verify(model, times(1)).addAttribute(eq("error"), anyString());
+    }
+
+    @Test
+    void login_Customer_RedirectsToCustomerDashboard() {
+        Principal principal = mock(Principal.class);
+        when(principal.getName()).thenReturn("customer@example.com");
+        when(userService.isCustomer("customer@example.com")).thenReturn(true);
+
+        String viewName = authController.login(principal);
+
+        assertEquals("redirect:/customer-dashboard", viewName);
+    }
+
+    @Test
+    void login_Vendor_RedirectsToVendorDashboard() {
+        Principal principal = mock(Principal.class);
+        when(principal.getName()).thenReturn("vendor@example.com");
+        when(userService.isVendor("vendor@example.com")).thenReturn(true);
+
+        String viewName = authController.login(principal);
+
+        assertEquals("redirect:/vendor-dashboard", viewName);
+    }
+
+    @Test
+    void login_InvalidUser_ThrowsResourceNotFoundException() {
+        Principal principal = mock(Principal.class);
+        when(principal.getName()).thenReturn("invalid@example.com");
+        when(userService.isCustomer("invalid@example.com")).thenReturn(false);
+        when(userService.isVendor("invalid@example.com")).thenReturn(false);
+
+        assertThrows(ResourceNotFoundException.class, () -> authController.login(principal));
     }
 }
