@@ -52,13 +52,23 @@ public class CustomerDashboardController {
     }
 
     /**
+     * Logs a user into the customer dashboard if they are a registered customer.
+     */
+    @GetMapping("/login")
+    public String loginToCustomerDashboard(Principal principal) {
+        Customer customer = customerRepository.findByEmail(principal.getName())
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+        return "customer/customer-dashboard";
+    }
+
+    /**
      * Displays the customer dashboard.
      *
      * @param model     the model to pass data to the view
      * @param principal the currently authenticated user
      * @return the view name to be rendered
      */
-    @GetMapping
+    @GetMapping("")
     public String customerDashboard(Model model, Principal principal) {
         Customer customer = customerRepository.findByEmail(principal.getName())
                 .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));

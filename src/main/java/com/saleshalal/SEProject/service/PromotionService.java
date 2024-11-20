@@ -5,7 +5,6 @@ import com.saleshalal.SEProject.model.Vendor;
 import com.saleshalal.SEProject.repository.PromotionRepository;
 import jakarta.transaction.Transactional;
 import org.apache.velocity.exception.ResourceNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -75,14 +74,7 @@ public class PromotionService {
      */
     @Transactional
     public void savePromotion(Promotion promotion) {
-        try {
-            promotionRepository.save(promotion);
-        } catch (Exception e) {
-            // Log the exception (consider using a logging framework like SLF4J)
-            System.err.println("Error saving promotion: " + e.getMessage());
-            // Optionally, rethrow the exception or handle it as needed
-            throw new RuntimeException("Error saving promotion", e);
-        }
+        promotionRepository.save(promotion);
     }
 
     /**
@@ -92,11 +84,7 @@ public class PromotionService {
      */
     @Transactional
     public void deletePromotion(Long promotionId) {
-        try {
-            promotionRepository.deleteById(promotionId);
-        } catch (Exception e) {
-            throw new RuntimeException("Error deleting promotion", e);
-        }
+        promotionRepository.deleteById(promotionId);
     }
 
     /**

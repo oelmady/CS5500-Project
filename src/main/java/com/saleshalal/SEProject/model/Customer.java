@@ -14,10 +14,10 @@ public class Customer extends AUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long customer_id;
-    
+    private Long Id;
+
     @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "shopping_cart_id", nullable = false)
+    @JoinColumn(name = "customer_id", nullable = false)
     private ShoppingCart cart = new ShoppingCart(this);
 
     public Customer(String email, String password, String name, UserRole role) {

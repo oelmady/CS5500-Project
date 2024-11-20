@@ -20,7 +20,7 @@ import java.math.BigDecimal;
 public class CartItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long cart_item_id;
+    private Long Id;
 
     @ManyToOne
     @JoinColumn(name = "shopping_cart_id", nullable = false)

@@ -52,7 +52,7 @@ public class ShoppingCartService {
 
         // Check if promotion already in cart
         Optional<CartItem> existingItem = cart.getCartItems().stream()
-                .filter(item -> item.getPromotion().getPromotion_id().equals(promotionId))
+                .filter(item -> item.getPromotion().getId().equals(promotionId))
                 .findFirst();
 
         CartItem cartItem;

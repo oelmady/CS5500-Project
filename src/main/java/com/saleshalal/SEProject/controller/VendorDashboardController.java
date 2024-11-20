@@ -41,6 +41,17 @@ public class VendorDashboardController {
     }
 
     /**
+     * Logs a user into the vendor dashboard if they are a registered vendor.
+     */
+    @GetMapping("/login")
+    public String loginToVendorDashboard(Principal principal) {
+        Vendor vendor = vendorRepository.findByEmail(principal.getName())
+                .orElseThrow(() -> new ResourceNotFoundException("Vendor not found"));
+        return "vendor/vendor-dashboard";
+    }
+
+
+    /**
      * Displays the vendor dashboard.
      *
      * @param model     the vendor model to pass data to the view
@@ -55,18 +66,6 @@ public class VendorDashboardController {
         model.addAttribute("vendor", vendor);
         model.addAttribute("promotions", vendor.getPromotions());
         return "vendor/vendor-dashboard";
-    }
-
-    /**
-     * Displays the create promotion form.
-     *
-     * @param model the model to pass data to the view
-     * @return the create promotion view
-     */
-    @GetMapping("/create-promotion")
-    public String createPromotion(Model model) {
-        model.addAttribute("promotion", new Promotion());
-        return "vendor/create-promotion";
     }
 
     /**
@@ -107,9 +106,10 @@ public class VendorDashboardController {
     @GetMapping("/edit-promotion/{id}")
     public String showEditPromotionForm(@PathVariable Long id, Model model, Principal principal) {
         Promotion promotion = promotionService.getPromotionById(id);
-        if (promotion == null || !Objects.equals(
-                promotion.getVendor().getName(),
-                principal.getName())) {
+        if (promotion == null ||
+                !Objects.equals(
+                        promotion.getVendor().getName(),
+                        principal.getName())) {
             throw new ResourceNotFoundException("Promotion not found");
         }
         model.addAttribute("promotion", promotion);

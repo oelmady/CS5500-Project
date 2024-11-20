@@ -18,9 +18,11 @@ public class ShoppingCart {
             orphanRemoval = true)
     private final List<CartItem> cartItems =
             new ArrayList<>();
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long shopping_cart_id;
+    private Long Id;
+
     @OneToOne
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;

@@ -2,8 +2,6 @@ package com.saleshalal.SEProject.model;
 
 import com.saleshalal.SEProject.data.VendorDTO;
 
-import org.springframework.security.crypto.password.PasswordEncoder;
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -22,7 +20,7 @@ public class Vendor extends AUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long vendor_id;
+    private Long Id;
 
     @NotBlank(message = "Business name is required")
     private String businessName;

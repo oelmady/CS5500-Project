@@ -19,6 +19,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+/**
+ * Service class for managing user login and registration.
+ */
 @Service
 @Transactional
 public class UserService implements UserDetailsService {
@@ -36,6 +39,12 @@ public class UserService implements UserDetailsService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    /**
+     * Registers a new customer.
+     *
+     * @param customerDTO the customer data to register
+     * @throws RuntimeException if the email is already registered
+     */
     public void registerCustomer(CustomerDTO customerDTO) {
         if (customerRepository.findByEmail(customerDTO.getEmail()).isPresent()) {
             throw new RuntimeException("Email already registered");
@@ -45,6 +54,12 @@ public class UserService implements UserDetailsService {
         customerRepository.save(customer);
     }
 
+    /**
+     * Registers a new vendor.
+     *
+     * @param vendorDTO the vendor data to register
+     * @throws RuntimeException if the email is already registered
+     */
     public void registerVendor(VendorDTO vendorDTO) {
         if (vendorRepository.findByEmail(vendorDTO.getEmail()).isPresent()) {
             throw new RuntimeException("Email already registered");
@@ -54,13 +69,22 @@ public class UserService implements UserDetailsService {
         vendorRepository.save(vendor);
     }
 
+    /**
+     * Loads a user by email.
+     *
+     * @param email the email to load the user by
+     * @return the user details
+     * @throws UsernameNotFoundException if the user is not found
+     */
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        // Check if the user is a customer
         Optional<Customer> customer = customerRepository.findByEmail(email);
         if (customer.isPresent()) {
             return buildUserDetails(customer.get());
         }
 
+        // Check if the user is a vendor
         Optional<Vendor> vendor = vendorRepository.findByEmail(email);
         if (vendor.isPresent()) {
             return buildUserDetails(vendor.get());
@@ -69,6 +93,12 @@ public class UserService implements UserDetailsService {
         throw new UsernameNotFoundException("User not found");
     }
 
+    /**
+     * Builds UserDetails object from AUser.
+     *
+     * @param user the user to build details for
+     * @return the UserDetails object
+     */
     private UserDetails buildUserDetails(AUser user) {
         return org.springframework.security.core.userdetails.User
                 .withUsername(user.getEmail())

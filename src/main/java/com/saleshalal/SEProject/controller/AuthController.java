@@ -76,7 +76,7 @@ public class AuthController {
         try {
             userService.registerCustomer(customerDTO);
             logger.info("Customer registered successfully: {}", customerDTO.getEmail());
-            return "redirect:/login?registered=true";
+            return "redirect:/login";
         } catch (Exception e) {
             logger.error("Error occurred while registering customer: {}", e.getMessage(), e);
             model.addAttribute("error", e.getMessage());
@@ -97,7 +97,6 @@ public class AuthController {
         return "vendor/vendor-registration";
     }
 
-
     /**
      * Handles the vendor registration form submission.
      *
@@ -107,8 +106,7 @@ public class AuthController {
      * @return the view name to be rendered
      */
     @PostMapping("/register/vendor")
-    public String registerVendor(@ModelAttribute VendorDTO vendorDTO,
-                                 BindingResult result,
+    public String registerVendor(@ModelAttribute VendorDTO vendorDTO, BindingResult result,
                                  Model model) {
         logger.info("Registering vendor with business name: {}", vendorDTO.getBusinessName());
 
@@ -120,7 +118,7 @@ public class AuthController {
         try {
             userService.registerVendor(vendorDTO);
             logger.info("Vendor registered successfully: {}", vendorDTO.getBusinessName());
-            return "redirect:/login?registered=true";
+            return "redirect:/login";
         } catch (Exception e) {
             logger.error("Error occurred while registering vendor: {}", e.getMessage(), e);
             model.addAttribute("error", e.getMessage());

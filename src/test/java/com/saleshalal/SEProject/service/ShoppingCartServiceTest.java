@@ -98,9 +98,12 @@ class ShoppingCartServiceTest {
         Promotion promotion = new Promotion();
         promotion.setAvailableQuantity(2);
 
+        // Mock the shoppingCartRepository to return the cart when findByCustomer is called with the customer
         when(shoppingCartRepository.findByCustomer(customer)).thenReturn(Optional.of(cart));
         when(promotionRepository.findById(1L)).thenReturn(Optional.of(promotion));
 
+        // Call the addToCart method and assert that it throws an exception because the promotion
+        // has insufficient quantity
         assertThrows(RuntimeException.class, () -> shoppingCartService.addToCart(customer, 1L, 5));
     }
 
@@ -116,10 +119,12 @@ class ShoppingCartServiceTest {
         cartItem.setPromotion(promotion);
         cartItem.setQuantity(3);
 
+        // Mock the cartItemRepository to return the cart item when findById is called with the ID
         when(cartItemRepository.findById(1L)).thenReturn(Optional.of(cartItem));
 
         shoppingCartService.removeCartItem(1L);
 
+        // Verify that the cart item was deleted and the promotion's available quantity was restored
         verify(cartItemRepository, times(1)).delete(cartItem);
         assertEquals(8, promotion.getAvailableQuantity());
     }
@@ -129,8 +134,10 @@ class ShoppingCartServiceTest {
      */
     @Test
     void removeCartItem_CartItemDoesNotExist_ThrowsException() {
+        // Mock the cartItemRepository to return an empty optional when findById is called with the ID
         when(cartItemRepository.findById(1L)).thenReturn(Optional.empty());
 
+        // Call the removeCartItem method and assert that it throws an exception because the cart item does not exist
         assertThrows(ResourceNotFoundException.class, () -> shoppingCartService.removeCartItem(1L));
     }
 }

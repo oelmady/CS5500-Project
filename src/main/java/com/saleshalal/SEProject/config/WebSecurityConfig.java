@@ -29,6 +29,7 @@ public class WebSecurityConfig {
                         .permitAll()
                         .requestMatchers("/vendor/**").hasRole("VENDOR")
                         .requestMatchers("/customer/**").hasRole("CUSTOMER")
+                        .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )

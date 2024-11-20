@@ -22,9 +22,6 @@ import static org.mockito.Mockito.*;
 class VendorDashboardControllerTest {
 
     @Mock
-    private PromotionRepository promotionRepository;
-
-    @Mock
     private PromotionService promotionService;
 
     @Mock
@@ -49,12 +46,15 @@ class VendorDashboardControllerTest {
      */
     @Test
     void vendorDashboard_VendorExists_ReturnsDashboardView() {
+        // Create a vendor and mock the vendorRepository to return the vendor when findByEmail is called
         Vendor vendor = new Vendor();
         when(vendorRepository.findByEmail(anyString())).thenReturn(Optional.of(vendor));
         when(principal.getName()).thenReturn("vendor@example.com");
 
+
         String viewName = vendorDashboardController.vendorDashboard(model, principal);
 
+        // Verify that the view name is correct and that the vendor and promotions were added to the model
         assertEquals("vendor/vendor-dashboard", viewName);
         verify(model, times(1)).addAttribute("vendor", vendor);
         verify(model, times(1)).addAttribute("promotions", vendor.getPromotions());
@@ -65,9 +65,12 @@ class VendorDashboardControllerTest {
      */
     @Test
     void vendorDashboard_VendorDoesNotExist_ThrowsException() {
+        // Mock the vendorRepository to return an empty optional when findByEmail is called
         when(vendorRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+        // Mock the principal to return a vendor email
         when(principal.getName()).thenReturn("vendor@example.com");
 
+        // Call the vendorDashboard method and verify that it throws a ResourceNotFoundException
         assertThrows(ResourceNotFoundException.class, () -> vendorDashboardController.vendorDashboard(model, principal));
     }
 
@@ -110,6 +113,7 @@ class VendorDashboardControllerTest {
     @Test
     void showEditPromotionForm_PromotionExists_ReturnsEditPromotionView() {
         Promotion promotion = new Promotion();
+        promotion.setVendor(new Vendor());
         // Mock the promotionService to return the promotion
         when(promotionService.getPromotionById(1L)).thenReturn(promotion);
 
@@ -132,9 +136,23 @@ class VendorDashboardControllerTest {
         assertThrows(ResourceNotFoundException.class, () -> vendorDashboardController.showEditPromotionForm(promotionID, model, principal));
     }
 
+    /**
+     * Tests that the showEditPromotionForm method throws a ResourceNotFoundException when the promotion does not belong to the principal.
+     */
     @Test
     void showEditPromotionForm_PromotionDoesNotBelongToPrincipal_ThrowsException() {
-        // todo
+        Promotion promotion = new Promotion();
+        Vendor vendor = new Vendor();
+        vendor.setName("otherVendor@example.com");
+        promotion.setVendor(vendor);
+
+        // Mock the promotionService to return the promotion
+        when(promotionService.getPromotionById(1L)).thenReturn(promotion);
+        // Mock the principal to return a different Vendor email
+        when(principal.getName()).thenReturn("vendor@example.com");
+
+        // Call the showEditPromotionForm method and verify that it throws a ResourceNotFoundException
+        assertThrows(ResourceNotFoundException.class, () -> vendorDashboardController.showEditPromotionForm(1L, model, principal));
     }
 
     /**
@@ -145,6 +163,7 @@ class VendorDashboardControllerTest {
         Promotion promotion = new Promotion();
         when(promotionService.getPromotionById(1L)).thenReturn(promotion);
 
+        // Call the editPromotion method
         String viewName = vendorDashboardController.editPromotion(1L, promotion);
 
         assertEquals("redirect:/vendor-dashboard", viewName);
