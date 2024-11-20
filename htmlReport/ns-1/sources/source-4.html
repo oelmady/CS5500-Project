@@ -1,0 +1,239 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > VendorDashboardController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.saleshalal.SEProject.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: VendorDashboardController (com.saleshalal.SEProject.controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">VendorDashboardController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    85.7%
+  </span>
+  <span class="absValue">
+    (6/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    93.3%
+  </span>
+  <span class="absValue">
+    (28/30)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.saleshalal.SEProject.controller;
+&nbsp;
+&nbsp;import com.saleshalal.SEProject.model.Promotion;
+&nbsp;import com.saleshalal.SEProject.model.Vendor;
+&nbsp;import com.saleshalal.SEProject.repository.PromotionRepository;
+&nbsp;import com.saleshalal.SEProject.repository.VendorRepository;
+&nbsp;import com.saleshalal.SEProject.service.PromotionService;
+&nbsp;import org.apache.velocity.exception.ResourceNotFoundException;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.stereotype.Controller;
+&nbsp;import org.springframework.ui.Model;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;
+&nbsp;import java.security.Principal;
+&nbsp;import java.util.Objects;
+&nbsp;
+&nbsp;/*
+&nbsp;Vendor Dashboard:
+&nbsp;
+&nbsp;List all vendor&#39;s promotions
+&nbsp;Create new promotions
+&nbsp;Edit existing promotions
+&nbsp;Delete promotions
+&nbsp;Security checks to ensure vendors can only modify their own promotions
+&nbsp;todo Thymeleaf templates for each view:
+&nbsp;vendor/dashboard.html
+&nbsp;vendor/create-promotion.html
+&nbsp;vendor/edit-promotion.html
+&nbsp; */
+&nbsp;@Controller
+&nbsp;@RequestMapping(&quot;/vendor-dashboard&quot;)
+&nbsp;public class VendorDashboardController {
+&nbsp;
+&nbsp;    private final PromotionService promotionService;
+&nbsp;    private final VendorRepository vendorRepository;
+&nbsp;
+&nbsp;    @Autowired
+<b class="fc">&nbsp;    public VendorDashboardController(PromotionService promotionService, VendorRepository vendorRepository, PromotionRepository promotionRepository) {</b>
+<b class="fc">&nbsp;        this.promotionService = promotionService;</b>
+<b class="fc">&nbsp;        this.vendorRepository = vendorRepository;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Displays the vendor dashboard.
+&nbsp;     *
+&nbsp;     * @param model     the vendor model to pass data to the view
+&nbsp;     * @param principal the currently authenticated user
+&nbsp;     * @return the vendor dashboard view
+&nbsp;     */
+&nbsp;    @GetMapping
+&nbsp;    public String vendorDashboard(Model model, Principal principal) {
+<b class="fc">&nbsp;        Vendor vendor = vendorRepository.findByEmail(principal.getName())</b>
+<b class="fc">&nbsp;                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Vendor not found&quot;));</b>
+&nbsp;
+<b class="fc">&nbsp;        model.addAttribute(&quot;vendor&quot;, vendor);</b>
+<b class="fc">&nbsp;        model.addAttribute(&quot;promotions&quot;, vendor.getPromotions());</b>
+<b class="fc">&nbsp;        return &quot;vendor/vendor-dashboard&quot;;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Displays the create promotion form.
+&nbsp;     *
+&nbsp;     * @param model the model to pass data to the view
+&nbsp;     * @return the create promotion view
+&nbsp;     */
+&nbsp;    @GetMapping(&quot;/create-promotion&quot;)
+&nbsp;    public String createPromotion(Model model) {
+<b class="nc">&nbsp;        model.addAttribute(&quot;promotion&quot;, new Promotion());</b>
+<b class="nc">&nbsp;        return &quot;vendor/create-promotion&quot;;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handles the create promotion form submission.
+&nbsp;     *
+&nbsp;     * @param model the model to pass data to the view
+&nbsp;     * @return the create promotion view
+&nbsp;     */
+&nbsp;    @GetMapping(&quot;/create-promotion&quot;)
+&nbsp;    public String showCreatePromotionForm(Model model) {
+<b class="fc">&nbsp;        model.addAttribute(&quot;promotion&quot;, new Promotion());</b>
+<b class="fc">&nbsp;        return &quot;vendor/create-promotion&quot;;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handles the create promotion form submission.
+&nbsp;     *
+&nbsp;     * @param promotion the promotion to create
+&nbsp;     * @param principal the currently authenticated user
+&nbsp;     * @return the vendor dashboard view
+&nbsp;     */
+&nbsp;    @PostMapping(&quot;/create-promotion&quot;)
+&nbsp;    public String createPromotion(@ModelAttribute Promotion promotion, Principal principal) {
+<b class="fc">&nbsp;        Vendor vendor = vendorRepository.findByEmail(principal.getName())</b>
+<b class="fc">&nbsp;                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Vendor not found&quot;));</b>
+<b class="fc">&nbsp;        promotion.setVendor(vendor);</b>
+<b class="fc">&nbsp;        promotionService.savePromotion(promotion);</b>
+<b class="fc">&nbsp;        return &quot;redirect:/vendor-dashboard&quot;;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Displays the edit promotion form.
+&nbsp;     *
+&nbsp;     * @param id    the ID of the promotion to edit
+&nbsp;     * @param model the model to pass data to the view
+&nbsp;     * @return the edit promotion view
+&nbsp;     */
+&nbsp;    @GetMapping(&quot;/edit-promotion/{id}&quot;)
+&nbsp;    public String showEditPromotionForm(@PathVariable Long id, Model model, Principal principal) {
+<b class="fc">&nbsp;        Promotion promotion = promotionService.getPromotionById(id);</b>
+<b class="fc">&nbsp;        if (promotion == null ||</b>
+<b class="fc">&nbsp;                !Objects.equals(</b>
+<b class="fc">&nbsp;                        promotion.getVendor().getName(),</b>
+<b class="fc">&nbsp;                        principal.getName())) {</b>
+<b class="fc">&nbsp;            throw new ResourceNotFoundException(&quot;Promotion not found&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        model.addAttribute(&quot;promotion&quot;, promotion);</b>
+<b class="fc">&nbsp;        return &quot;vendor/edit-promotion&quot;;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handles the edit promotion form submission.
+&nbsp;     *
+&nbsp;     * @param id               the ID of the promotion to update
+&nbsp;     * @param promotionDetails the promotion details to update
+&nbsp;     * @return the vendor dashboard view
+&nbsp;     */
+&nbsp;    @PostMapping(&quot;/edit-promotion/{id}&quot;)
+&nbsp;    public String editPromotion(@PathVariable Long id, @ModelAttribute Promotion promotionDetails) {
+<b class="fc">&nbsp;        Promotion promotion = promotionService.getPromotionById(id);</b>
+<b class="fc">&nbsp;        promotion.setName(promotionDetails.getName());</b>
+<b class="fc">&nbsp;        promotion.setDescription(promotionDetails.getDescription());</b>
+<b class="fc">&nbsp;        promotionService.savePromotion(promotion);</b>
+<b class="fc">&nbsp;        return &quot;redirect:/vendor-dashboard&quot;;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-11-20 10:33</div>
+</div>
+</body>
+</html>

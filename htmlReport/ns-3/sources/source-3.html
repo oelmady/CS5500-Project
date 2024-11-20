@@ -1,0 +1,214 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > UserService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.saleshalal.SEProject.service</a>
+</div>
+
+<h1>Coverage Summary for Class: UserService (com.saleshalal.SEProject.service)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">UserService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    60%
+  </span>
+  <span class="absValue">
+    (3/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    46.2%
+  </span>
+  <span class="absValue">
+    (12/26)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.saleshalal.SEProject.service;
+&nbsp;
+&nbsp;import com.saleshalal.SEProject.data.CustomerDTO;
+&nbsp;import com.saleshalal.SEProject.data.VendorDTO;
+&nbsp;import com.saleshalal.SEProject.model.Customer;
+&nbsp;import com.saleshalal.SEProject.model.AUser;
+&nbsp;import com.saleshalal.SEProject.model.UserRole;
+&nbsp;import com.saleshalal.SEProject.model.Vendor;
+&nbsp;import com.saleshalal.SEProject.repository.CustomerRepository;
+&nbsp;
+&nbsp;import com.saleshalal.SEProject.repository.VendorRepository;
+&nbsp;import jakarta.transaction.Transactional;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.security.core.userdetails.UserDetails;
+&nbsp;import org.springframework.security.core.userdetails.UserDetailsService;
+&nbsp;import org.springframework.security.core.userdetails.UsernameNotFoundException;
+&nbsp;import org.springframework.security.crypto.password.PasswordEncoder;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;/**
+&nbsp; * Service class for managing user login and registration.
+&nbsp; */
+&nbsp;@Service
+&nbsp;@Transactional
+&nbsp;public class UserService implements UserDetailsService {
+&nbsp;
+&nbsp;    private final CustomerRepository customerRepository;
+&nbsp;    private final VendorRepository vendorRepository;
+&nbsp;    private final PasswordEncoder passwordEncoder;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    public UserService(CustomerRepository customerRepository,
+&nbsp;                       VendorRepository vendorRepository,
+<b class="fc">&nbsp;                       PasswordEncoder passwordEncoder) {</b>
+<b class="fc">&nbsp;        this.customerRepository = customerRepository;</b>
+<b class="fc">&nbsp;        this.vendorRepository = vendorRepository;</b>
+<b class="fc">&nbsp;        this.passwordEncoder = passwordEncoder;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Registers a new customer.
+&nbsp;     *
+&nbsp;     * @param customerDTO the customer data to register
+&nbsp;     * @throws RuntimeException if the email is already registered
+&nbsp;     */
+&nbsp;    public void registerCustomer(CustomerDTO customerDTO) {
+<b class="fc">&nbsp;        if (customerRepository.findByEmail(customerDTO.getEmail()).isPresent()) {</b>
+<b class="nc">&nbsp;            throw new RuntimeException(&quot;Email already registered&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        customerDTO.setPassword(passwordEncoder.encode(customerDTO.getPassword()));</b>
+<b class="fc">&nbsp;        Customer customer = new Customer(customerDTO);</b>
+<b class="fc">&nbsp;        customerRepository.save(customer);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Registers a new vendor.
+&nbsp;     *
+&nbsp;     * @param vendorDTO the vendor data to register
+&nbsp;     * @throws RuntimeException if the email is already registered
+&nbsp;     */
+&nbsp;    public void registerVendor(VendorDTO vendorDTO) {
+<b class="fc">&nbsp;        if (vendorRepository.findByEmail(vendorDTO.getEmail()).isPresent()) {</b>
+<b class="nc">&nbsp;            throw new RuntimeException(&quot;Email already registered&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        vendorDTO.setPassword(passwordEncoder.encode(vendorDTO.getPassword()));</b>
+<b class="fc">&nbsp;        Vendor vendor = new Vendor(vendorDTO);</b>
+<b class="fc">&nbsp;        vendorRepository.save(vendor);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Loads a user by email.
+&nbsp;     *
+&nbsp;     * @param email the email to load the user by
+&nbsp;     * @return the user details
+&nbsp;     * @throws UsernameNotFoundException if the user is not found
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+&nbsp;        // Check if the user is a customer
+<b class="nc">&nbsp;        Optional&lt;Customer&gt; customer = customerRepository.findByEmail(email);</b>
+<b class="nc">&nbsp;        if (customer.isPresent()) {</b>
+<b class="nc">&nbsp;            return buildUserDetails(customer.get());</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Check if the user is a vendor
+<b class="nc">&nbsp;        Optional&lt;Vendor&gt; vendor = vendorRepository.findByEmail(email);</b>
+<b class="nc">&nbsp;        if (vendor.isPresent()) {</b>
+<b class="nc">&nbsp;            return buildUserDetails(vendor.get());</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        throw new UsernameNotFoundException(&quot;User not found&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Builds UserDetails object from AUser.
+&nbsp;     *
+&nbsp;     * @param user the user to build details for
+&nbsp;     * @return the UserDetails object
+&nbsp;     */
+&nbsp;    private UserDetails buildUserDetails(AUser user) {
+<b class="nc">&nbsp;        return org.springframework.security.core.userdetails.User</b>
+<b class="nc">&nbsp;                .withUsername(user.getEmail())</b>
+<b class="nc">&nbsp;                .password(user.getPassword())</b>
+<b class="nc">&nbsp;                .roles(user.getRole().name())</b>
+<b class="nc">&nbsp;                .build();</b>
+&nbsp;    }
+&nbsp;}
+&nbsp;
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-11-20 10:33</div>
+</div>
+</body>
+</html>

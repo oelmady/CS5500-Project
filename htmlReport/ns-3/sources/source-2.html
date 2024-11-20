@@ -1,0 +1,209 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ShoppingCartService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.saleshalal.SEProject.service</a>
+</div>
+
+<h1>Coverage Summary for Class: ShoppingCartService (com.saleshalal.SEProject.service)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ShoppingCartService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    80%
+  </span>
+  <span class="absValue">
+    (4/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    90.9%
+  </span>
+  <span class="absValue">
+    (30/33)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.saleshalal.SEProject.service;
+&nbsp;
+&nbsp;import com.saleshalal.SEProject.exception.InsufficientQuantityException;
+&nbsp;import com.saleshalal.SEProject.model.CartItem;
+&nbsp;import com.saleshalal.SEProject.model.Customer;
+&nbsp;import com.saleshalal.SEProject.model.Promotion;
+&nbsp;import com.saleshalal.SEProject.model.ShoppingCart;
+&nbsp;import com.saleshalal.SEProject.repository.CartItemRepository;
+&nbsp;import com.saleshalal.SEProject.repository.PromotionRepository;
+&nbsp;import com.saleshalal.SEProject.repository.ShoppingCartRepository;
+&nbsp;import jakarta.transaction.Transactional;
+&nbsp;import org.apache.velocity.exception.ResourceNotFoundException;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;@Service
+&nbsp;@Transactional
+&nbsp;public class ShoppingCartService {
+&nbsp;
+&nbsp;    private final ShoppingCartRepository shoppingCartRepository;
+&nbsp;
+&nbsp;    private final CartItemRepository cartItemRepository;
+&nbsp;
+&nbsp;    private final PromotionRepository promotionRepository;
+&nbsp;
+&nbsp;    @Autowired
+<b class="fc">&nbsp;    public ShoppingCartService(ShoppingCartRepository shoppingCartRepository, CartItemRepository cartItemRepository, PromotionRepository promotionRepository) {</b>
+<b class="fc">&nbsp;        this.shoppingCartRepository = shoppingCartRepository;</b>
+<b class="fc">&nbsp;        this.cartItemRepository = cartItemRepository;</b>
+<b class="fc">&nbsp;        this.promotionRepository = promotionRepository;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Transactional
+&nbsp;    public ShoppingCart getCustomerCart(Customer customer) {
+<b class="fc">&nbsp;        return shoppingCartRepository.findByCustomer(customer)</b>
+<b class="fc">&nbsp;                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Cart not found&quot;));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Transactional
+&nbsp;    public CartItem addToCart(Customer customer, Long promotionId, Integer quantity) {
+<b class="fc">&nbsp;        ShoppingCart cart = getCustomerCart(customer);</b>
+&nbsp;
+<b class="fc">&nbsp;        Promotion promotion = promotionRepository.findById(promotionId)</b>
+<b class="fc">&nbsp;                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Promotion not found&quot;));</b>
+&nbsp;
+&nbsp;        // Check availability
+<b class="fc">&nbsp;        if (promotion.getAvailableQuantity() &lt; quantity) {</b>
+<b class="fc">&nbsp;            throw new RuntimeException(new InsufficientQuantityException(&quot;Not enough items available&quot;));</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Check if promotion already in cart
+<b class="fc">&nbsp;        Optional&lt;CartItem&gt; existingItem = cart.getCartItems().stream()</b>
+<b class="fc">&nbsp;                .filter(item -&gt; item.getPromotion().getPromotion_id().equals(promotionId))</b>
+<b class="fc">&nbsp;                .findFirst();</b>
+&nbsp;
+&nbsp;        CartItem cartItem;
+<b class="fc">&nbsp;        if (existingItem.isPresent()) {</b>
+&nbsp;            // Update quantity if item already in cart
+<b class="nc">&nbsp;            cartItem = existingItem.get();</b>
+<b class="nc">&nbsp;            cartItem.setQuantity(cartItem.getQuantity() + quantity);</b>
+&nbsp;        } else {
+&nbsp;            // Create new cart item
+<b class="fc">&nbsp;            cartItem = new CartItem();</b>
+<b class="fc">&nbsp;            cartItem.setShoppingCart(cart);</b>
+<b class="fc">&nbsp;            cartItem.setPromotion(promotion);</b>
+<b class="fc">&nbsp;            cartItem.setQuantity(quantity);</b>
+<b class="fc">&nbsp;            cart.getCartItems().add(cartItem);</b>
+&nbsp;        }
+&nbsp;        // Update promotion availability
+<b class="fc">&nbsp;        promotion.setAvailableQuantity(promotion.getAvailableQuantity() - quantity);</b>
+<b class="fc">&nbsp;        promotionRepository.save(promotion);</b>
+&nbsp;
+<b class="fc">&nbsp;        return cartItemRepository.save(cartItem);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @Transactional
+&nbsp;    public void removeCartItem(Long cartItemId) {
+<b class="fc">&nbsp;        CartItem cartItem = cartItemRepository.findById(cartItemId)</b>
+<b class="fc">&nbsp;                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Cart item not found&quot;));</b>
+&nbsp;
+&nbsp;        // Restore promotion availability
+<b class="fc">&nbsp;        Promotion promotion = cartItem.getPromotion();</b>
+<b class="fc">&nbsp;        promotion.setAvailableQuantity(</b>
+<b class="fc">&nbsp;                promotion.getAvailableQuantity() + cartItem.getQuantity()</b>
+&nbsp;        );
+<b class="fc">&nbsp;        promotionRepository.save(promotion);</b>
+&nbsp;
+&nbsp;        // Remove cart item
+<b class="fc">&nbsp;        cartItemRepository.delete(cartItem);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Update cart item quantity and promotion availability.
+&nbsp;     *
+&nbsp;     * @param cartItemId the ID of the cart item to update
+&nbsp;     * @param quantity   the new quantity
+&nbsp;     */
+&nbsp;    @Transactional
+&nbsp;    public void updateCartItemQuantity(Long cartItemId, Integer quantity) {
+&nbsp;        //todo
+<b class="nc">&nbsp;    }</b>
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-11-20 10:33</div>
+</div>
+</body>
+</html>

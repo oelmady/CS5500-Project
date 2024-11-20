@@ -1,0 +1,137 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > Customer</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.saleshalal.SEProject.model</a>
+</div>
+
+<h1>Coverage Summary for Class: Customer (com.saleshalal.SEProject.model)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Customer</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    66.7%
+  </span>
+  <span class="absValue">
+    (2/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (2/4)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.saleshalal.SEProject.model;
+&nbsp;
+&nbsp;import com.saleshalal.SEProject.data.CustomerDTO;
+&nbsp;
+&nbsp;import jakarta.persistence.*;
+&nbsp;import lombok.Getter;
+&nbsp;import lombok.Setter;
+&nbsp;
+&nbsp;@Entity
+&nbsp;@Getter
+&nbsp;@Setter
+&nbsp;@Table(name = &quot;customers&quot;)
+&nbsp;public class Customer extends AUser {
+&nbsp;
+&nbsp;    @Id
+&nbsp;    @GeneratedValue(strategy = GenerationType.IDENTITY)
+&nbsp;    private Long customer_id;
+&nbsp;    
+<b class="fc">&nbsp;    @OneToOne(mappedBy = &quot;customer&quot;, cascade = CascadeType.ALL, orphanRemoval = true)</b>
+&nbsp;    @JoinColumn(name = &quot;shopping_cart_id&quot;, nullable = false)
+&nbsp;    private ShoppingCart cart = new ShoppingCart(this);
+&nbsp;
+&nbsp;    public Customer(String email, String password, String name, UserRole role) {
+<b class="nc">&nbsp;        super(email, password, name, role);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Customer(CustomerDTO customerDTO) {
+<b class="nc">&nbsp;        super(customerDTO.getEmail(), customerDTO.getPassword(), customerDTO.getName(), UserRole.CUSTOMER);</b>
+&nbsp;    }
+&nbsp;
+<b class="fc">&nbsp;    public Customer() {</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-11-20 10:33</div>
+</div>
+</body>
+</html>
