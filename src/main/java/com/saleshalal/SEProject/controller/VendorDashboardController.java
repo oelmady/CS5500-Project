@@ -53,7 +53,7 @@ public class VendorDashboardController {
 
     /**
      * Displays the vendor dashboard.
-     *
+     * This is called whenever a user is redirected to the vendor-dashboard page.
      * @param model     the vendor model to pass data to the view
      * @param principal the currently authenticated user
      * @return the vendor dashboard view

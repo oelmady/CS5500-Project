@@ -8,6 +8,23 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ShoppingCartTest {
 
+    /**
+     * Test that a shopping cart is automatically generated when a customer is registered.
+     * The cart should be empty.
+     */
+    @Test
+    void constructor_CustomerCartGenerated() {
+        Customer customer = new Customer();
+        ShoppingCart cart = customer.getCart();
+
+        assertNotNull(cart);
+        assertEquals(customer, cart.getCustomer());
+        assertTrue(cart.getCartItems().isEmpty());
+    }
+
+    /**
+     * Test that an item can be added to the shopping cart.
+     */
     @Test
     void addCartItem_ItemAddedToCart() {
         ShoppingCart cart = new ShoppingCart(new Customer());

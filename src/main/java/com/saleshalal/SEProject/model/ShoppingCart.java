@@ -12,21 +12,17 @@ import java.util.List;
 @Entity
 @Table(name = "shopping_carts")
 public class ShoppingCart {
-
-    @OneToMany(mappedBy = "shoppingCart",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true)
-    private final List<CartItem> cartItems =
-            new ArrayList<>();
-    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    private Long id;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "shopping_cart_id")
+    private final List<CartItem> cartItems = new ArrayList<>();
 
     @OneToOne
-    @JoinColumn(name = "customer_id", nullable = false)
+    @JoinColumn(name = "customer_id", referencedColumnName = "id")
     private Customer customer;
-
     public ShoppingCart(Customer customer) {
         this.customer = customer;
     }

@@ -128,5 +128,28 @@ public class UserService implements UserDetailsService {
         // check vendor repository
         return vendorRepository.findByEmail(email).isPresent();
     }
+
+    /**
+     * Validates a user's credentials.
+     * @param email the input email
+     * @param password the input password
+     * @return true if the credentials are valid
+     */
+    public int validateUser(String email, String password) {
+        if (isCustomer(email)){
+            if (passwordEncoder.matches(password,
+                    customerRepository.findByEmail(email).get().getPassword())){
+                return 1;
+            } else return 0;
+        }
+        else if (isVendor(email)){
+            if (passwordEncoder.matches(password,
+                    vendorRepository.findByEmail(email).get().getPassword())){
+                return 1;
+            } else return 0;
+        }
+        return -1;
+    }
+
 }
 

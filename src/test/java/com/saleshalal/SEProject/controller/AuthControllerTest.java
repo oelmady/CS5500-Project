@@ -127,35 +127,64 @@ class AuthControllerTest {
         verify(model, times(1)).addAttribute(eq("error"), anyString());
     }
 
+    /**
+     * Test that a user with a valid customer registration logs in and is redirected to the
+     * customer dashboard.
+     */
     @Test
     void login_Customer_RedirectsToCustomerDashboard() {
-        Principal principal = mock(Principal.class);
-        when(principal.getName()).thenReturn("customer@example.com");
-        when(userService.isCustomer("customer@example.com")).thenReturn(true);
+        String email = "customer@example.com";
+        String password = "password";
 
-        String viewName = authController.login(principal);
+        when(userService.validateUser(email, password)).thenReturn(1);
+        when(userService.isCustomer(email)).thenReturn(true);
+
+        String viewName = authController.login(email, password, model);
 
         assertEquals("redirect:/customer-dashboard", viewName);
+        verify(userService, times(1)).validateUser(email, password);
+        verify(userService, times(1)).isCustomer(email);
     }
 
+    /**
+     * Test that a user with a valid vendor registration logs in and is redirected to the vendor dashboard.
+     */
     @Test
     void login_Vendor_RedirectsToVendorDashboard() {
-        Principal principal = mock(Principal.class);
-        when(principal.getName()).thenReturn("vendor@example.com");
-        when(userService.isVendor("vendor@example.com")).thenReturn(true);
+        // Arrange email and password
+        String email = "email";
+        String password = "password";
 
-        String viewName = authController.login(principal);
+        // Mock the validateUser method to return 1
+        when(userService.validateUser(email, password)).thenReturn(1);
 
+        // Mock the isVendor method to return true
+        when(userService.isVendor(email)).thenReturn(true);
+
+        // Call the login post method
+        String viewName = authController.login(email, password, model);
+
+        // Assert that the user is redirected to the vendor dashboard
         assertEquals("redirect:/vendor-dashboard", viewName);
     }
 
+    /**
+     * Test that a user with invalid credentials is redirected to the login page.
+     * The user is not redirected to the customer or vendor dashboard.
+     */
     @Test
     void login_InvalidUser_ThrowsResourceNotFoundException() {
-        Principal principal = mock(Principal.class);
-        when(principal.getName()).thenReturn("invalid@example.com");
-        when(userService.isCustomer("invalid@example.com")).thenReturn(false);
-        when(userService.isVendor("invalid@example.com")).thenReturn(false);
+        // Arrange email and password
+        String email = "email";
+        String password = "password";
 
-        assertThrows(ResourceNotFoundException.class, () -> authController.login(principal));
+        // Mock the validateUser method to return 0
+        when(userService.validateUser(email, password)).thenReturn(0);
+
+        // Call the login post method
+        String viewName = authController.login(email, password, model);
+
+        // Assert that the user is redirected to the login page
+        assertEquals("login", viewName);
     }
 }

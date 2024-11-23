@@ -7,7 +7,7 @@
 <div class="form-container">
     <h2>Edit Promotion</h2>
     <form method="post"
-          th:action="@{/vendor-dashboard/edit-promotion/{id}(id=${promotion.getId})}"
+          th:action="@{/vendor-dashboard/edit-promotion/{id}(id=${promotion.id})}"
           th:object="${promotion}">
         <div>
             <label>Name:</label>

@@ -20,7 +20,7 @@ public class Vendor extends AUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    private Long id;
 
     @NotBlank(message = "Business name is required")
     private String businessName;
