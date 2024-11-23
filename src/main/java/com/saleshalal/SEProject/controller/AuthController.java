@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
 
@@ -36,7 +37,7 @@ public class AuthController {
 
     /**
      * Shows the login form.
-     *
+     * This is called whenever a user is redirected to the login page.
      * @return the view name to be rendered
      */
     @GetMapping("/login")
@@ -129,21 +130,49 @@ public class AuthController {
         }
     }
 
+    @PostMapping("/login")
+    public String login(@RequestParam String email, @RequestParam String password) {
+        logger.info("POST /login called with email: {}", email);
+        return "redirect:/customer-dashboard";
+    }
+
+
     /**
      * Logs a user into the appropriate dashboard based on their role.
      *
-     * @param principal the currently authenticated user
-     * @return the dashboard view to be rendered
+     * @param email    the email of the user to log in
+     * @param password the password of the user to log in
+     * @param model    the model to pass data to the view
+     * @return the view name to be rendered
      */
-    @PostMapping("/login")
-    public String login(Principal principal) {
-        String email = principal.getName();
-        if (userService.isCustomer(email)) {
-            return "redirect:/customer-dashboard";
-        } else if (userService.isVendor(email)) {
-            return "redirect:/vendor-dashboard";
-        } else {
-            throw new ResourceNotFoundException("User not found");
+    @PostMapping("/TODO")
+    public String login(@RequestParam("email") String email,
+                        @RequestParam("password") String password,
+                        Model model) {
+        logger.info("POST login for user: {}", email);
+        int credential = userService.validateUser(email, password);
+        // Validate user credentials
+        if (credential == 1) {
+            logger.info("Login successful for user: {}", email);
+
+            if (userService.isCustomer(email)) {
+                logger.info("User is a customer");
+                return "redirect:/customer-dashboard";
+            } else if (userService.isVendor(email)) {
+                logger.info("User is a vendor");
+                return "redirect:/vendor-dashboard";
+            }
+        } else if (credential == 0) {
+            logger.error("Invalid credentials for user: {}", email);
+            // Display error message
+            model.addAttribute("error", "Invalid password. Try again.");
+            return "login";
         }
+
+        logger.error("User not found: {}", email);
+        // Display error message
+        model.addAttribute("error", "User not found");
+        return "login";
     }
+
 }

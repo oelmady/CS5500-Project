@@ -14,7 +14,7 @@ public class Customer extends AUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    private Long id;
 
     @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "customer_id", nullable = false)

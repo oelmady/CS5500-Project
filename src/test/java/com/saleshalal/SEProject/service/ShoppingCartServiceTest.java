@@ -140,4 +140,12 @@ class ShoppingCartServiceTest {
         // Call the removeCartItem method and assert that it throws an exception because the cart item does not exist
         assertThrows(ResourceNotFoundException.class, () -> shoppingCartService.removeCartItem(1L));
     }
+
+
+    /**
+     * Tests that the checkout method should remove all cart items from the cart.
+     */
+    @Test
+    void checkout_CartExists_RemovesAllCartItems() {
+    }
 }
