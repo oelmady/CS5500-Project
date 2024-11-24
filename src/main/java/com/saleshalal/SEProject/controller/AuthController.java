@@ -78,7 +78,7 @@ public class AuthController {
             logger.info("Customer registered successfully: {}", customerDTO.getEmail());
             return "redirect:/login";
         } catch (Exception e) {
-            logger.error("Error occurred while registering customer: {}", e.getMessage(), e);
+            logger.error("Error occurred while registering customer: {}", e.getMessage());
             model.addAttribute("error", e.getMessage());
             return "customer/customer-registration";
         }
@@ -121,7 +121,7 @@ public class AuthController {
             logger.info("Vendor registered successfully: {}", vendorDTO.getBusinessName());
             return "redirect:/login";
         } catch (Exception e) {
-            logger.error("Error occurred while registering vendor: {}", e.getMessage(), e);
+            logger.error("Error occurred while registering vendor: {}", e.getMessage());
             model.addAttribute("error", e.getMessage());
             return "vendor/vendor-registration";
         }
