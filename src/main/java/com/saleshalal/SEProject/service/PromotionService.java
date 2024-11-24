@@ -1,5 +1,6 @@
 package com.saleshalal.SEProject.service;
 
+import com.saleshalal.SEProject.config.CustomLogger;
 import com.saleshalal.SEProject.model.Promotion;
 import com.saleshalal.SEProject.model.Vendor;
 import com.saleshalal.SEProject.repository.PromotionRepository;
@@ -16,7 +17,7 @@ import java.util.List;
 @Service
 public class PromotionService {
 
-    private final Logger logger = LoggerFactory.getLogger(PromotionService.class);
+    private final CustomLogger logger = new CustomLogger(PromotionService.class);
     private final PromotionRepository promotionRepository;
 
     public PromotionService(PromotionRepository promotionRepository) {

@@ -1,12 +1,10 @@
 package com.saleshalal.SEProject.controller;
 
-import com.saleshalal.SEProject.model.Customer;
-import com.saleshalal.SEProject.model.Vendor;
+import com.saleshalal.SEProject.config.CustomLogger;
 import com.saleshalal.SEProject.service.UserService;
 import com.saleshalal.SEProject.data.CustomerDTO;
 import com.saleshalal.SEProject.data.VendorDTO;
 
-import org.apache.velocity.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,15 +17,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.security.Principal;
 
 /**
  * Implements login and registration functionality.
  */
 @Controller
 public class AuthController {
-
-    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
+    private final CustomLogger logger = new CustomLogger(AuthController.class);
     private final UserService userService;
 
     @Autowired
@@ -38,7 +34,7 @@ public class AuthController {
     /**
      * Shows the login form.
      * This is called whenever a user is redirected to the login page.
-     * @return the view name to be rendered
+     * @return the login view to be rendered
      */
     @GetMapping("/login")
     public String showLoginForm() {
@@ -65,7 +61,7 @@ public class AuthController {
      * @param customerDTO the data transfer object containing customer registration details
      * @param result      the binding result for validation errors
      * @param model       the model to pass data to the view
-     * @return the customer registration view to be rendered
+     * @return the customer registration view to be rendered or a redirect to login
      */
     @PostMapping("/register/customer")
     public String registerCustomer(@ModelAttribute CustomerDTO customerDTO,
@@ -107,7 +103,7 @@ public class AuthController {
      * @param vendorDTO the data transfer object containing vendor registration details
      * @param result    the binding result for validation errors
      * @param model     the model to pass data to the view
-     * @return the view name to be rendered
+     * @return the view name to be rendered, or a redirect to login
      */
     @PostMapping("/register/vendor")
     public String registerVendor(@ModelAttribute VendorDTO vendorDTO, BindingResult result,
@@ -119,6 +115,7 @@ public class AuthController {
             return "vendor/vendor-registration";
         }
 
+        // Register the vendor
         try {
             userService.registerVendor(vendorDTO);
             logger.info("Vendor registered successfully: {}", vendorDTO.getBusinessName());
@@ -130,13 +127,6 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/login")
-    public String login(@RequestParam String email, @RequestParam String password) {
-        logger.info("POST /login called with email: {}", email);
-        return "redirect:/customer-dashboard";
-    }
-
-
     /**
      * Logs a user into the appropriate dashboard based on their role.
      *
@@ -145,7 +135,7 @@ public class AuthController {
      * @param model    the model to pass data to the view
      * @return the view name to be rendered
      */
-    @PostMapping("/TODO")
+    @PostMapping("/login")
     public String login(@RequestParam("email") String email,
                         @RequestParam("password") String password,
                         Model model) {

@@ -1,5 +1,6 @@
 package com.saleshalal.SEProject.controller;
 
+import com.saleshalal.SEProject.config.CustomLogger;
 import com.saleshalal.SEProject.model.Customer;
 import com.saleshalal.SEProject.model.Promotion;
 import com.saleshalal.SEProject.model.ShoppingCart;
@@ -40,6 +41,7 @@ customer/cart.html
 @RequestMapping("/customer-dashboard")
 public class CustomerDashboardController {
 
+    private static final CustomLogger logger = new CustomLogger(CustomerDashboardController.class);
     private final PromotionService promotionService;
     private final ShoppingCartService shoppingCartService;
     private final CustomerRepository customerRepository;

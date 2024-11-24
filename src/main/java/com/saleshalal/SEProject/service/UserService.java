@@ -1,5 +1,6 @@
 package com.saleshalal.SEProject.service;
 
+import com.saleshalal.SEProject.config.CustomLogger;
 import com.saleshalal.SEProject.data.CustomerDTO;
 import com.saleshalal.SEProject.data.VendorDTO;
 import com.saleshalal.SEProject.model.Customer;
@@ -29,7 +30,7 @@ import java.util.Optional;
 @Transactional
 public class UserService implements UserDetailsService {
 
-    private final Logger logger = LoggerFactory.getLogger(UserService.class);
+    private final CustomLogger logger = new CustomLogger(UserService.class);
     private final CustomerRepository customerRepository;
     private final VendorRepository vendorRepository;
     private final PasswordEncoder passwordEncoder;
