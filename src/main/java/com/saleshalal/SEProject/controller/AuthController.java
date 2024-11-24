@@ -131,8 +131,8 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestParam String email, @RequestParam String password) {
-        logger.info("POST /login called with email: {}", email);
+    public String todo(@RequestParam String email, @RequestParam String password, Model model) {
+        logger.info("POST /login with email: {}", email);
         return "redirect:/customer-dashboard";
     }
 
