@@ -51,7 +51,7 @@ public class UserService implements UserDetailsService {
      * @throws RuntimeException if the email is already registered
      */
     public void registerCustomer(CustomerDTO customerDTO) {
-        logger.info("Registering new customer: {}", customerDTO.getEmail());
+        logger.info("Registering customer: {}", customerDTO.getEmail());
         if (customerRepository.findByEmail(customerDTO.getEmail()).isPresent()) {
             throw new RuntimeException("Email already registered");
         }
@@ -68,7 +68,7 @@ public class UserService implements UserDetailsService {
      * @throws RuntimeException if the email is already registered
      */
     public void registerVendor(VendorDTO vendorDTO) {
-        logger.info("Registering new vendor: {}", vendorDTO.getEmail());
+        logger.info("Registering vendor: {}", vendorDTO.getEmail());
         if (vendorRepository.findByEmail(vendorDTO.getEmail()).isPresent()) {
             throw new RuntimeException("Email already registered");
         }
@@ -97,6 +97,10 @@ public class UserService implements UserDetailsService {
         // Check if the user is a vendor
         Optional<Vendor> vendor = vendorRepository.findByEmail(email);
         if (vendor.isPresent()) {
+
+            // add the vendor's email as a granted authority
+
+
             return buildUserDetails(vendor.get());
         }
         logger.error("User not found: {}", email);

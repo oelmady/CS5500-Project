@@ -10,6 +10,7 @@ import com.saleshalal.SEProject.service.PromotionService;
 import com.saleshalal.SEProject.service.ShoppingCartService;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,6 +38,7 @@ customer/cart.html
 /**
  * Controller for the customer dashboard.
  */
+@PreAuthorize("hasRole('CUSTOMER')")
 @Controller
 @RequestMapping("/customer-dashboard")
 public class CustomerDashboardController {

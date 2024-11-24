@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestParam;
 
 
@@ -67,7 +65,7 @@ public class AuthController {
     public String registerCustomer(@ModelAttribute CustomerDTO customerDTO,
                                    BindingResult result,
                                    Model model) {
-        logger.info("Registering customer with email: {}", customerDTO.getEmail());
+        logger.info("POST: registering customer with email: {}", customerDTO.getEmail());
 
         if (result.hasErrors()) {
             logger.warn("Validation errors found during customer registration");
@@ -92,7 +90,7 @@ public class AuthController {
      */
     @GetMapping("/register/vendor")
     public String showVendorRegistration(Model model) {
-        logger.info("Showing vendor registration form");
+        logger.info("GET: Showing vendor registration form");
         model.addAttribute("vendorDTO", new VendorDTO());
         return "vendor/vendor-registration";
     }
@@ -108,7 +106,7 @@ public class AuthController {
     @PostMapping("/register/vendor")
     public String registerVendor(@ModelAttribute VendorDTO vendorDTO, BindingResult result,
                                  Model model) {
-        logger.info("Registering vendor with business name: {}", vendorDTO.getBusinessName());
+        logger.info("POST: Registering vendor with business name: {}", vendorDTO.getBusinessName());
 
         if (result.hasErrors()) {
             logger.warn("Validation errors found during vendor registration");
@@ -139,7 +137,7 @@ public class AuthController {
     public String login(@RequestParam("email") String email,
                         @RequestParam("password") String password,
                         Model model) {
-        logger.info("POST login for user: {}", email);
+        logger.info("POST: login for user: {}", email);
         int credential = userService.validateUser(email, password);
         // Validate user credentials
         if (credential == 1) {

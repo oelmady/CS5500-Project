@@ -7,6 +7,7 @@ import com.saleshalal.SEProject.repository.VendorRepository;
 import com.saleshalal.SEProject.service.PromotionService;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +28,7 @@ vendor/dashboard.html
 vendor/create-promotion.html
 vendor/edit-promotion.html
  */
+@PreAuthorize("hasRole('VENDOR')")
 @Controller
 @RequestMapping("/vendor-dashboard")
 public class VendorDashboardController {

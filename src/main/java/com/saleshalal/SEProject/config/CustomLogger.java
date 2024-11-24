@@ -45,19 +45,19 @@ public class CustomLogger {
         logger.debug("[Custom Debug Log] " + message);
     }
 
-    public void info(String s, String message) {
-        logger.info("[Custom Info Log] " + s + message);
+    public void info(String s, Object... args) {
+        logger.info("[Custom Info Log] " + s, args);
     }
 
-    public void error(String s, String message) {
-        logger.error("[Custom Error Log] " + s + message);
-    }
-    
-    public void debug(String s, String message) {
-        logger.debug("[Custom Debug Log] " + s + message);
+    public void error(String s, Object... args) {
+        logger.error("[Custom Error Log] " + s, args);
     }
 
-    public void warn(String s, String message) {
-        logger.warn("[Custom Warning Log] " + s + message);
+    public void debug(String s, Object... args) {
+        logger.debug("[Custom Debug Log] " + s, args);
+    }
+
+    public void warn(String s, Object... args) {
+        logger.warn("[Custom Warning Log] " + s, args);
     }
 }
