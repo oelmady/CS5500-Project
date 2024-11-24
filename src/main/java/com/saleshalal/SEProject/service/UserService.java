@@ -50,9 +50,11 @@ public class UserService implements UserDetailsService {
      * @throws RuntimeException if the email is already registered
      */
     public void registerCustomer(CustomerDTO customerDTO) {
+        logger.info("Registering new customer: {}", customerDTO.getEmail());
         if (customerRepository.findByEmail(customerDTO.getEmail()).isPresent()) {
             throw new RuntimeException("Email already registered");
         }
+        logger.info("Success! Registering new customer: {}", customerDTO.getEmail());
         customerDTO.setPassword(passwordEncoder.encode(customerDTO.getPassword()));
         Customer customer = new Customer(customerDTO);
         customerRepository.save(customer);
@@ -65,9 +67,11 @@ public class UserService implements UserDetailsService {
      * @throws RuntimeException if the email is already registered
      */
     public void registerVendor(VendorDTO vendorDTO) {
+        logger.info("Registering new vendor: {}", vendorDTO.getEmail());
         if (vendorRepository.findByEmail(vendorDTO.getEmail()).isPresent()) {
             throw new RuntimeException("Email already registered");
         }
+        logger.info("Success! Registering vendor: {}", vendorDTO.getEmail());
         vendorDTO.setPassword(passwordEncoder.encode(vendorDTO.getPassword()));
         Vendor vendor = new Vendor(vendorDTO);
         vendorRepository.save(vendor);
@@ -82,6 +86,7 @@ public class UserService implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        logger.info("Loading user by email: {}", email);
         // Check if the user is a customer
         Optional<Customer> customer = customerRepository.findByEmail(email);
         if (customer.isPresent()) {
@@ -93,7 +98,7 @@ public class UserService implements UserDetailsService {
         if (vendor.isPresent()) {
             return buildUserDetails(vendor.get());
         }
-
+        logger.error("User not found: {}", email);
         throw new UsernameNotFoundException("User not found");
     }
 
@@ -143,13 +148,15 @@ public class UserService implements UserDetailsService {
         logger.info("Validating user: {}", email);
         Optional<Customer> customer = customerRepository.findByEmail(email);
         if (customer.isPresent()) {
+            logger.info("Customer found: {}", email);
             return passwordEncoder.matches(password, customer.get().getPassword()) ? 1 : 0;
         }
         Optional<Vendor> vendor = vendorRepository.findByEmail(email);
         if (vendor.isPresent()) {
+            logger.info("Vendor found: {}", email);
             return passwordEncoder.matches(password, vendor.get().getPassword()) ? 1 : 0;
         }
-        logger.info("User not found: {}", email);
+        logger.error("User not found: {}", email);
         return -1;
     }
 

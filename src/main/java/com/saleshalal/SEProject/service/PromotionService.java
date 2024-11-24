@@ -5,6 +5,9 @@ import com.saleshalal.SEProject.model.Vendor;
 import com.saleshalal.SEProject.repository.PromotionRepository;
 import jakarta.transaction.Transactional;
 import org.apache.velocity.exception.ResourceNotFoundException;
+import org.hibernate.validator.internal.util.logging.Log_$logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -13,6 +16,7 @@ import java.util.List;
 @Service
 public class PromotionService {
 
+    private final Logger logger = LoggerFactory.getLogger(PromotionService.class);
     private final PromotionRepository promotionRepository;
 
     public PromotionService(PromotionRepository promotionRepository) {
