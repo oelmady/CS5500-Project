@@ -134,23 +134,23 @@ public class UserService implements UserDetailsService {
 
     /**
      * Validates a user's credentials for login. Returns coded values for different scenarios.
-     * @param email the input email
+     *
+     * @param email    the input email
      * @param password the input password
      * @return 1 if the user is valid, 0 if the password is incorrect, -1 if the user is not found
      */
-public int validateUser(String email, String password) {
-    logger.info("Validating user: {}", email);
-    Optional<Customer> customer = customerRepository.findByEmail(email);
-    if (customer.isPresent()) {
-        return passwordEncoder.matches(password, customer.get().getPassword()) ? 1 : 0;
+    public int validateUser(String email, String password) {
+        logger.info("Validating user: {}", email);
+        Optional<Customer> customer = customerRepository.findByEmail(email);
+        if (customer.isPresent()) {
+            return passwordEncoder.matches(password, customer.get().getPassword()) ? 1 : 0;
+        }
+        Optional<Vendor> vendor = vendorRepository.findByEmail(email);
+        if (vendor.isPresent()) {
+            return passwordEncoder.matches(password, vendor.get().getPassword()) ? 1 : 0;
+        }
+        logger.info("User not found: {}", email);
+        return -1;
     }
-    Optional<Vendor> vendor = vendorRepository.findByEmail(email);
-    if (vendor.isPresent()) {
-        return passwordEncoder.matches(password, vendor.get().getPassword()) ? 1 : 0;
-    }
-    logger.info("User not found: {}", email);
-    return -1;
-}
 
 }
-
