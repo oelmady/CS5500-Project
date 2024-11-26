@@ -49,12 +49,14 @@ public class CustomerDashboardController {
     private final CustomerRepository customerRepository;
 
     @Autowired
-    public CustomerDashboardController(PromotionService promotionService, PromotionRepository promotionRepository, ShoppingCartService shoppingCartService, CustomerRepository customerRepository) {
+    public CustomerDashboardController(
+            PromotionService promotionService,
+            ShoppingCartService shoppingCartService,
+            CustomerRepository customerRepository) {
         this.promotionService = promotionService;
         this.shoppingCartService = shoppingCartService;
         this.customerRepository = customerRepository;
     }
-
 
     /**
      * Displays the customer dashboard.

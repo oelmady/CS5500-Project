@@ -1,0 +1,15 @@
+## Current Bugs
+1. Issue:
+    - Description:
+    - Regression tests:
+        - [ ] Test 1
+        - [ ] Test 2
+    - Solution:
+
+
+## Potential issues
+1. Issue:
+    - Description:
+    - Solution:
+
+## What works

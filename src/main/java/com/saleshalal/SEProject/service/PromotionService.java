@@ -5,10 +5,12 @@ import com.saleshalal.SEProject.model.Promotion;
 import com.saleshalal.SEProject.model.Vendor;
 import com.saleshalal.SEProject.repository.PromotionRepository;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.hibernate.validator.internal.util.logging.Log_$logger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -18,9 +20,17 @@ import java.util.List;
 public class PromotionService {
 
     private final CustomLogger logger = new CustomLogger(PromotionService.class);
-    private final PromotionRepository promotionRepository;
+    private PromotionRepository promotionRepository;
 
+    @Autowired
     public PromotionService(PromotionRepository promotionRepository) {
+        this.promotionRepository = promotionRepository;
+    }
+
+    public PromotionService() {}
+
+    @Autowired
+    public void setPromotionRepository(PromotionRepository promotionRepository) {
         this.promotionRepository = promotionRepository;
     }
 
@@ -63,13 +73,9 @@ public class PromotionService {
      * @return the created promotion
      */
     @Transactional
-    public Promotion createPromotion(Vendor vendor, Promotion promotion) {
-        try {
-            promotion.setVendor(vendor);
-            return promotionRepository.save(promotion);
-        } catch (Exception e) {
-            throw new RuntimeException("Error creating promotion", e);
-        }
+    public Promotion createPromotion(Vendor vendor, @Valid Promotion promotion) {
+        promotion.setVendor(vendor);
+        return promotionRepository.save(promotion);
     }
 
     /**
@@ -78,7 +84,7 @@ public class PromotionService {
      * @param promotion the promotion to save
      */
     @Transactional
-    public void savePromotion(Promotion promotion) {
+    public void savePromotion(@Valid Promotion promotion) {
         promotionRepository.save(promotion);
     }
 
@@ -100,7 +106,7 @@ public class PromotionService {
      * @return the updated promotion
      */
     @Transactional
-    public Promotion updatePromotion(Long promotionId, Promotion updatedPromotion) {
+    public Promotion updatePromotion(Long promotionId, @Valid Promotion updatedPromotion) {
         try {
             Promotion existingPromotion = promotionRepository.findById(promotionId)
                     .orElseThrow(() -> new ResourceNotFoundException("Promotion not found"));
